@@ -34,6 +34,7 @@
 #include "pio.h"
 #include "pmc.h"
 #include "adc.h"
+#include "wdt.h"
 
 
 
@@ -48,11 +49,15 @@ int main (void)
 	board_init();
 	
 	pmc_enable_periph_clk(ID_PWM);
+	pmc_enable_periph_clk(ID_PIOA);
 	pwm_channel_disable(PWM, PWM_CHANNEL_0);
 	pwm_clk.ul_clka = 1000 * 100;
 	pwm_clk.ul_clkb = 0;
 	pwm_clk.ul_mck = 32000000;
 	pwm_init(PWM, &pwm_clk);
+	
+	pio_set_peripheral(PIOA, PIO_TYPE_PIO_PERIPH_A, PIO_PA0);
+	pio_set_peripheral(PIOA, PIO_TYPE_PIO_PERIPH_A, PIO_PA1);
 	
 	pwm_ch_instance.ul_prescaler = PWM_CMR_CPRE_CLKA;
 	pwm_ch_instance.ul_period = 100;
