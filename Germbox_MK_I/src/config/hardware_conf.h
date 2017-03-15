@@ -20,6 +20,7 @@
 //Heater configuration
 #define HEATER_PORT					PIOA
 #define HEATER_PIN					PIO_PA16
+#define HEATER_PIN_MUX				PIO_TYPE_PIO_PERIPH_C
 #define HEATER_PWM_CH				PWM_CHANNEL_2
 
 #define HEATER_PWM_FREQUENCY		50	//frequency in hertz
