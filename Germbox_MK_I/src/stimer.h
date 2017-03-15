@@ -10,7 +10,8 @@
 #define STIMER_H_
 
 #include <stdint.h>
-#include "tc_interrupt.h"
+#include "tc.h"
+
 
 #define STIMER_NBR	5
 
@@ -26,7 +27,6 @@ typedef struct
 uint8_t autoreload;
 
 void stimer_init (void);
-void stimer_deamon (struct tc_module *const module);
 uint32_t stimer_set_time(uint8_t timer, uint32_t t, uint8_t autoreload);
 uint32_t stimer_start(uint8_t timer);
 uint32_t stimer_stop (uint8_t timer);

@@ -7,50 +7,46 @@
 
 #include "stimer.h"
 #include "tc.h"
-#include "tc_interrupt.h"
-#include "led.h"
+#include "pmc.h"
+#include "sysclk.h"
 #include <stdint.h>
+
 stimer_ch_t stimer_times[STIMER_NBR];
-struct tc_module tc_instance;
+
 
 
 void stimer_init (void)
 {
-	struct tc_config tc_conf;
-	uint8_t n;
+	pmc_enable_periph_clk(ID_TC0);
+	uint32_t ul_div;
+	uint32_t ul_tcclks;
+	uint32_t ul_sysclk = sysclk_get_cpu_hz();
+
+
+	// Configure TC for a 4Hz frequency and trigger on RC compare. 
+	tc_find_mck_divisor(1000, ul_sysclk, &ul_div, &ul_tcclks, ul_sysclk);
+	tc_init(TC0, 0, ul_tcclks | TC_CMR_CPCTRG);
+	tc_write_rc(TC0, 0, (ul_sysclk / ul_div) * 1000);
+
+	/* Configure and enable interrupt on RC compare  */
+	tc_enable_interrupt(TC0, 0, TC_IER_CPCS);
+	NVIC_DisableIRQ(TC0_IRQn);
+	NVIC_ClearPendingIRQ(TC0_IRQn);
+	NVIC_SetPriority(TC0_IRQn, 0);
+	NVIC_EnableIRQ(TC0_IRQn);
 	
-	for(n = 0; n < (STIMER_NBR - 1); n++) // init stimer struct
-	{
-		stimer_times[n].auto_reload = 0;
-		stimer_times[n].function = 0;
-		stimer_times[n].running = 0;
-		stimer_times[n].stopwatch = 0;
-		stimer_times[n].time = 0;	
-	}
-	
-	tc_get_config_defaults(&tc_conf);
-	tc_conf.clock_source = GCLK_GENERATOR_1;
-	tc_conf.clock_prescaler = TC_CLOCK_PRESCALER_DIV1;
-	tc_conf.count_direction = TC_COUNT_DIRECTION_UP;
-	tc_conf.counter_size = TC_COUNTER_SIZE_16BIT;
-	tc_conf.wave_generation = TC_WAVE_GENERATION_MATCH_FREQ;
-	
-	tc_init(&tc_instance, TC3, &tc_conf);
-	
-	tc_register_callback(&tc_instance, stimer_deamon, TC_CALLBACK_CC_CHANNEL0);
-	tc_enable_callback(&tc_instance, TC_CALLBACK_CC_CHANNEL0);
-	
-	tc_enable(&tc_instance);
-	tc_set_top_value(&tc_instance, 33);
-	tc_start_counter(&tc_instance);
-	system_interrupt_enable_global();
+	tc_start(TC0, 0);
 }
 
 
-void stimer_deamon (struct tc_module *const module)
+void TC0_Handler(void)
 {
 	uint32_t n;
-	for(n = 0; n < (STIMER_NBR -1); n++)
+	volatile uint32_t ul_dummy;
+
+	// Clear status bit to acknowledge interrupt
+	ul_dummy = tc_get_status(TC0, 0);
+	for(n = 0; n < (STIMER_NBR - 1); n++)
 	{
 		if(stimer_times[n].running)
 		{

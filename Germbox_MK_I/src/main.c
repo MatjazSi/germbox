@@ -32,6 +32,7 @@
 #include <stdint.h>
 
 #include "heater.h"
+#include "stimer.h"
 
 #include "adc.h"
 #include "wdt.h"
@@ -50,6 +51,7 @@ int main (void)
 	
 	heater_set(32);
 
+	stimer_init();
 	
 	
 	
