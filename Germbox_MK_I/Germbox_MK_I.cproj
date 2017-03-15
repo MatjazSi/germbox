@@ -506,6 +506,12 @@
     <Compile Include="src\ASF\sam\drivers\wdt\wdt.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\heater.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\heater.h">
+      <SubType>compile</SubType>
+    </Compile>
     <None Include="src\ASF\sam\drivers\wdt\wdt.h">
       <SubType>compile</SubType>
     </None>
