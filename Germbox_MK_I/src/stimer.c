@@ -23,10 +23,10 @@ void stimer_init (void)
 	uint32_t ul_sysclk = sysclk_get_cpu_hz();
 
 
-	// Configure TC for a 4Hz frequency and trigger on RC compare. 
-	tc_find_mck_divisor(1000, ul_sysclk, &ul_div, &ul_tcclks, ul_sysclk);
-	tc_init(TC0, 0, ul_tcclks | TC_CMR_CPCTRG);
-	tc_write_rc(TC0, 0, (ul_sysclk / ul_div) * 1000);
+	// Configure TC for a 1000Hz frequency and trigger on RC compare. 
+	//tc_find_mck_divisor(1000, ul_sysclk, &ul_div, &ul_tcclks, ul_sysclk);
+	tc_init(TC0, 0, TC_CMR_TCCLKS_TIMER_CLOCK4 | TC_CMR_CPCTRG);
+	tc_write_rc(TC0, 0, 250);
 
 	/* Configure and enable interrupt on RC compare  */
 	tc_enable_interrupt(TC0, 0, TC_IER_CPCS);
