@@ -32,7 +32,11 @@
 #include <stdint.h>
 
 #include "heater.h"
+<<<<<<< HEAD
 #include "stimer.h"
+=======
+#include "pump"
+>>>>>>> Pump
 
 #include "adc.h"
 #include "wdt.h"
@@ -63,7 +67,9 @@ int main (void)
 	sysclk_init();
 	board_init();
 	heater_init();
+	pump_init();
 	
+
 	heater_set(32);
 
 	stimer_init();
@@ -78,7 +84,6 @@ int main (void)
 	
 	while(1)
 	{
-		
 		asm("nop");
 	}
 	
