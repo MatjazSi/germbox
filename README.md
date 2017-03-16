@@ -13,6 +13,7 @@ Features to come:
 *Monitoring of light intensity
 *Data logging
 *Transfer of logged data via USB to PC
+*Battery backup (for logging)
 
 Project is under development
 
