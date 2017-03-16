@@ -5,7 +5,7 @@
     <ProjectVersion>7.0</ProjectVersion>
     <ToolchainName>com.Atmel.ARMGCC.C</ToolchainName>
     <ProjectGuid>dce6c7e3-ee26-4d79-826b-08594b9ad897</ProjectGuid>
-    <avrdevice>ATSAM3S4B</avrdevice>
+    <avrdevice>ATSAM3S1A</avrdevice>
     <avrdeviceseries>sam3s</avrdeviceseries>
     <OutputType>Executable</OutputType>
     <Language>C</Language>
@@ -197,7 +197,7 @@
     </AsfFrameworkConfig>
     <avrtool>com.atmel.avrdbg.tool.samice</avrtool>
     <avrtoolserialnumber>268005015</avrtoolserialnumber>
-    <avrdeviceexpectedsignature>0x28900960</avrdeviceexpectedsignature>
+    <avrdeviceexpectedsignature>0x28890561</avrdeviceexpectedsignature>
     <com_atmel_avrdbg_tool_samice>
       <ToolOptions>
         <InterfaceProperties>
@@ -513,6 +513,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\heater.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\pump.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\pump.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\stimer.c">

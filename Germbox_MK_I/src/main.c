@@ -33,7 +33,7 @@
 
 #include "heater.h"
 #include "stimer.h"
-#include "pump"
+#include "pump.h"
 #include "adc.h"
 #include "wdt.h"
 
@@ -42,12 +42,12 @@ void tgl (void)
 	volatile static n = 0;
 	if(n)
 	{
-		pio_set_pin_group_low(PIOA, PIO_PA17);
+		pio_set_pin_group_low(PIOA, PIO_PA15);
 		n = 0;
 	}
 	else
 	{
-		pio_set_pin_group_high(PIOA, PIO_PA17);
+		pio_set_pin_group_high(PIOA, PIO_PA15);
 		n = 1;
 	}
 }
@@ -70,7 +70,7 @@ int main (void)
 
 	stimer_init();
 	
-	pio_set_output(PIOA, PIO_PA17, LOW, DISABLE, DISABLE);
+	pio_set_output(PIOA, PIO_PA15, LOW, DISABLE, DISABLE);
 	
 	stimer_set_time(0, 250, 1);
 	stimer_register_callback(0, tgl);
