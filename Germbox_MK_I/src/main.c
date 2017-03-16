@@ -82,6 +82,7 @@ int main (void)
 	{
 
 		asm("nop");
+		asm("nop");
 	}
 	
 	
