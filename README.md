@@ -14,3 +14,5 @@ Features to come:
 *Data logging
 *Transfer of logged data via USB to PC
 
+Project is under development
+
