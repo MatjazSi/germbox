@@ -515,6 +515,12 @@
     <Compile Include="src\heater.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\stimer.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\stimer.h">
+      <SubType>compile</SubType>
+    </Compile>
     <None Include="src\ASF\sam\drivers\wdt\wdt.h">
       <SubType>compile</SubType>
     </None>
