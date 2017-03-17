@@ -69,7 +69,6 @@ int main (void)
 	heater_set(32);
 
 	stimer_init();
-	
 	pio_set_output(PIOA, PIO_PA15, LOW, DISABLE, DISABLE);
 	
 	stimer_set_time(0, 250, 1);
