@@ -9,8 +9,9 @@
 #ifndef DISPLAY_H_
 #define DISPLAY_H_
 
+#define DISPLAY_ADR		0x0A
 
 
-
+void display_init (void);
 
 #endif /* DISPLAY_H_ */

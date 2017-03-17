@@ -34,8 +34,11 @@
 #include "heater.h"
 #include "stimer.h"
 #include "pump.h"
+#include "display.h"
+
 #include "adc.h"
 #include "wdt.h"
+
 
 void tgl (void)
 {
@@ -74,6 +77,8 @@ int main (void)
 	stimer_set_time(0, 250, 1);
 	stimer_register_callback(0, tgl);
 	stimer_start(0);
+	
+	display_init();
 	
 	
 	
