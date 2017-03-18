@@ -11,12 +11,12 @@
 #include "pmc.h"
 #include <stdint.h>
 
-uint8_t buff [10] = "Hello";
+twi_packet_t twiPacket;
 
 void display_init (void)
 {
 	twi_options_t twiOptions;
-	twi_packet_t twiPacket;
+	
 	
 	pmc_enable_periph_clk(ID_PIOA);
 	pmc_enable_periph_clk(ID_TWI0);
@@ -34,18 +34,25 @@ void display_init (void)
 	twi_enable_master_mode(TWI0);
 	twi_master_init(TWI0, &twiOptions);
 	
-	//send test data
 	
-	while(1)
-	{
-		twiPacket.addr[0] = 0xCC;
-		twiPacket.addr_length = 1;
-		twiPacket.buffer = &buff;
-		twiPacket.chip = DISPLAY_ADR;
-		twiPacket.length = 5;
-		twi_master_read(TWI0, &twiPacket);
-		asm("nop");
-		
-	}
-	
+}
+
+void display_write_reg (uint8_t reg_addr, uint8_t value)
+{
+	twiPacket.addr[0] = reg_addr;
+	twiPacket.addr_length = 1;
+	twiPacket.buffer = &value;
+	twiPacket.chip = DISPLAY_ADR;
+	twiPacket.length = 1;
+	twi_master_write(TWI0, &twiPacket);
+}
+
+void display_write_buffer(uint8_t start_addr, uint8_t* buff, uint32_t len)
+{
+	twiPacket.addr[0] = start_addr;
+	twiPacket.addr_length = 1;
+	twiPacket.buffer = buff;
+	twiPacket.chip = DISPLAY_ADR;
+	twiPacket.length = len;
+	twi_master_write(TWI0, &twiPacket);
 }

@@ -60,7 +60,7 @@ int main (void)
 {
 
 	
-		
+	uint8_t bfr [] = "St. patrick's day";
 	
 	sysclk_init();
 	board_init();
@@ -85,6 +85,7 @@ int main (void)
 	while(1)
 	{
 
+		display_write_buffer(0x01, bfr, 21);
 		asm("nop");
 		asm("nop");
 	}
