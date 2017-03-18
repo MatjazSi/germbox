@@ -6,12 +6,15 @@
  */ 
 
 #include "display.h"
+#include "u8g2.h"
+
 #include "pio.h"
 #include "twi.h"
 #include "pmc.h"
 #include <stdint.h>
 
 twi_packet_t twiPacket;
+u8g2_t display;
 
 void display_init (void)
 {
@@ -33,6 +36,9 @@ void display_init (void)
 	
 	twi_enable_master_mode(TWI0);
 	twi_master_init(TWI0, &twiOptions);
+	
+	u8g2_Setup_ssd1306_i2c_128x64_vcomh0_f(display, 0, 0, 2);
+	
 	
 	
 }
