@@ -35,6 +35,7 @@
 #include "stimer.h"
 #include "pump.h"
 #include "display.h"
+#include "encoder.h"
 
 #include "adc.h"
 #include "wdt.h"
@@ -67,6 +68,8 @@ int main (void)
 	heater_init();
 	pump_init();
 	stimer_init();
+	display_init();
+	encoder_init();
 
 	pio_set_output(PIOA, PIO_PA15, LOW, DISABLE, DISABLE);
 	
@@ -74,7 +77,7 @@ int main (void)
 	stimer_register_callback(0, tgl);
 	stimer_start(0);
 	
-	display_init();
+	
 	display_write_string(0, 0, bfr);
 	while(1)
 	{

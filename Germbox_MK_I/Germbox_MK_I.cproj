@@ -518,6 +518,12 @@
     <Compile Include="src\display.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\encoder.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\encoder.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\font.h">
       <SubType>compile</SubType>
     </Compile>
