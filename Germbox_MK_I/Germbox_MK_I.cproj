@@ -518,6 +518,9 @@
     <Compile Include="src\display.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\font.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\heater.c">
       <SubType>compile</SubType>
     </Compile>

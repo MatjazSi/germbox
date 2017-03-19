@@ -13,6 +13,7 @@
 
 
 void display_init (void);
+void display_write_string (uint8_t row, uint8_t column, uint8_t *string);
 
 #define DISPLAY_ADR		0x3C
 

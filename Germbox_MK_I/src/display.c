@@ -6,7 +6,7 @@
  */ 
 
 #include "display.h"
-#include "u8g2.h"
+#include "font.h"
 
 #include "pio.h"
 #include "twi.h"
@@ -14,7 +14,6 @@
 #include <stdint.h>
 
 twi_packet_t twiPacket;
-u8g2_t display;
 
 static void display_write_reg (uint8_t reg_addr, uint8_t value)
 {
@@ -88,6 +87,23 @@ static void display_select_row (uint8_t row)
 	display_comand(0xB0 | row);
 }
 
+static void display_putch (uint8_t ch)
+{
+	uint32_t offset = 0, sub_offset;
+	if(ch < 32)
+	{
+		ch = 32;
+	}
+	ch -= 32;
+	offset = ch * 5;
+	for(sub_offset = 0; sub_offset < 5; sub_offset++)
+	{
+		display_data(font[offset + sub_offset]);
+	}
+	display_data(0x00);
+	
+}
+
 void display_clear (void)
 {
 	uint8_t page, col;
@@ -152,23 +168,17 @@ void display_init (void)
 
 	// Turn display back on
 	display_comand(SSD1306_DISPLAYON);
-	
-	
-	display_clear();
-	display_select_row(3);
-	display_select_column(17);
-	for(uint32_t n = 0; n < 20; n++)
-	{
 		
-		display_data(0XFF);
+	display_clear();
+
+}
+
+void display_write_string (uint8_t row, uint8_t column, uint8_t *string)
+{
+	while(*string)
+	{
+		display_putch(*string++);
 	}
-	display_select_row(4);
-	display_select_column(18);
-	for( uint32_t n = 0; n < 20; n++)
-		{
-			
-			display_data(0XFF);
-		}
 }
 
 

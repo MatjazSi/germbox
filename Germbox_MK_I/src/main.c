@@ -79,9 +79,7 @@ int main (void)
 	stimer_start(0);
 	
 	display_init();
-	
-	
-	
+	display_write_string(0, 0, bfr);
 	while(1)
 	{
 
