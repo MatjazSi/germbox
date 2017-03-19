@@ -372,6 +372,7 @@
       <Value>../src/ASF/sam/drivers/adc</Value>
       <Value>../src/ASF/sam/drivers/twi</Value>
       <Value>../src/ASF/sam/drivers/wdt</Value>
+      <Value>../src/u8g2</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize (-O1)</armgcc.compiler.optimization.level>
@@ -392,6 +393,7 @@
     </ListValues>
   </armgcc.linker.libraries.LibrarySearchPaths>
   <armgcc.linker.optimization.GarbageCollectUnusedSections>True</armgcc.linker.optimization.GarbageCollectUnusedSections>
+  <armgcc.linker.memorysettings.ExternalRAM />
   <armgcc.linker.miscellaneous.LinkerFlags>-Wl,--entry=Reset_Handler -Wl,--cref -mthumb -T../src/ASF/sam/utils/linker_scripts/sam3s/sam3s4/gcc/flash.ld</armgcc.linker.miscellaneous.LinkerFlags>
   <armgcc.assembler.general.IncludePaths>
     <ListValues>
@@ -415,6 +417,7 @@
       <Value>../src/ASF/sam/drivers/adc</Value>
       <Value>../src/ASF/sam/drivers/twi</Value>
       <Value>../src/ASF/sam/drivers/wdt</Value>
+      <Value>../src/u8g2</Value>
     </ListValues>
   </armgcc.assembler.general.IncludePaths>
   <armgcc.assembler.debugging.DebugLevel>Default (-g)</armgcc.assembler.debugging.DebugLevel>
@@ -507,6 +510,15 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\config\hardware_conf.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\display.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\display.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\font.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\heater.c">
