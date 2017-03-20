@@ -15,7 +15,7 @@ void thermo_init(void)
 {
 	pmc_enable_periph_clk(ID_PIOB);
 	pmc_enable_periph_clk(ID_ADC);
-	pio_set_input(GROUND_TEMP_PORT, GROUND_TEMP_PIN, PIO_OPENDRAIN);	
+	pio_set_input(GROUND_TEMP_PORT, GROUND_TEMP_PIN, 0);	
 	adc_init(ADC, 36000000, 2000000, 8);
 	adc_configure_timing(ADC, 0, ADC_SETTLING_TIME_3, 1);
 }

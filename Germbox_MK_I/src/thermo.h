@@ -18,6 +18,6 @@ float thermo_get_temp (void);
 #define GROUND_SENSOR_GAIN		1 / 10e-3		//sensor sensitivity in volts / °C
 #define GROUND_SENSOR_ADC_OFS	0				//adc offset in LSB
 #define REF_V					2.500			//reference voltage in volts
-#define THERMO_AVERAGING		16				//number of measurments for averaging	
+#define THERMO_AVERAGING		32				//number of measurments for averaging	
 
 #endif /* THERMO_H_ */
