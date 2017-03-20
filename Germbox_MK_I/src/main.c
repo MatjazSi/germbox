@@ -30,12 +30,15 @@
  */
 #include <asf.h>
 #include <stdint.h>
+#include <stdio.h>
+
 
 #include "heater.h"
 #include "stimer.h"
 #include "pump.h"
 #include "display.h"
 #include "thermo.h"
+#include "encoder.h"
 
 #include "adc.h"
 #include "wdt.h"
@@ -45,9 +48,6 @@ int main (void)
 {
 
 	
-	uint8_t bfr [] = "St. patrick's day";
-	volatile float temp;
-	
 	sysclk_init();
 	board_init();
 	heater_init();
@@ -55,14 +55,12 @@ int main (void)
 	stimer_init();
 	thermo_init();
 
-	
 	display_init();
-	display_write_string(0, 0, bfr);
-	display_write_string(3, 15, bfr);
+	encoder_init();
+
 	while(1)
 	{
-		temp = thermo_get_temp();
-		asm("nop");
+
 	}
 	
 }
