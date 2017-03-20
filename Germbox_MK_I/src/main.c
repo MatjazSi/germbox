@@ -30,6 +30,7 @@
  */
 #include <asf.h>
 #include <stdint.h>
+#include <stdio.h>
 
 #include "heater.h"
 #include "stimer.h"
@@ -62,6 +63,7 @@ int main (void)
 
 	
 	uint8_t bfr [] = "St. patrick's day";
+	int32_t a, cumul = 0;
 	
 	sysclk_init();
 	board_init();
@@ -79,9 +81,16 @@ int main (void)
 	
 	
 	display_write_string(0, 0, bfr);
+	encoder_reset();
 	while(1)
 	{
-
+		a = encoder_get();
+		if(a)
+		{
+			cumul += a;
+			sprintf(bfr, "ENC:%3.d", cumul);
+			display_write_string(0, 0, bfr);
+		}
 	}
 	
 	
