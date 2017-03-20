@@ -19,9 +19,6 @@ void stimer_init (void)
 {
 	pmc_enable_periph_clk(ID_TC0);
 	uint32_t ul_div;
-	uint32_t ul_tcclks;
-	uint32_t ul_sysclk = sysclk_get_cpu_hz();
-
 
 	// Configure TC for a 1000Hz frequency and trigger on RC compare. 
 	//tc_find_mck_divisor(1000, ul_sysclk, &ul_div, &ul_tcclks, ul_sysclk);
@@ -42,8 +39,8 @@ void stimer_init (void)
 void TC0_Handler(void)
 {
 	uint32_t n;
-	volatile uint32_t ul_dummy;
-
+	uint32_t ul_dummy;
+	
 	// Clear status bit to acknowledge interrupt
 	ul_dummy = tc_get_status(TC0, 0);
 	for(n = 0; n < (STIMER_NBR - 1); n++)

@@ -33,15 +33,9 @@
 #include <stdio.h>
 
 
-#include "heater.h"
-#include "stimer.h"
-#include "pump.h"
-#include "display.h"
-#include "thermo.h"
-#include "encoder.h"
 
-#include "adc.h"
-#include "wdt.h"
+
+
 
 
 int main (void)
@@ -50,13 +44,7 @@ int main (void)
 	
 	sysclk_init();
 	board_init();
-	heater_init();
-	pump_init();
-	stimer_init();
-	thermo_init();
 
-	display_init();
-	encoder_init();
 
 	while(1)
 	{
