@@ -56,11 +56,12 @@ static void pin_c_handler(void)
 
 void encoder_init (void)
 {
+	volatile uint32_t dummy;
 	pmc_enable_periph_clk(ID_PIOA);
-	pio_set_input(ENC_PORT, ENC_A_PIN, PIO_PULLUP | PIO_DEBOUNCE);
-	pio_set_input(ENC_PORT, ENC_B_PIN, PIO_PULLUP | PIO_DEBOUNCE);
-	pio_set_input(ENC_PORT, ENC_C_PIN, PIO_PULLUP | PIO_DEBOUNCE);
-	pio_set_input(ENC_PORT, ENC_SW_PIN, PIO_PULLUP | PIO_DEBOUNCE);
+	pio_set_input(ENC_PORT, ENC_A_PIN, PIO_PULLUP );
+	pio_set_input(ENC_PORT, ENC_B_PIN, PIO_PULLUP );
+	pio_set_input(ENC_PORT, ENC_C_PIN, PIO_PULLUP );
+	pio_set_input(ENC_PORT, ENC_SW_PIN, PIO_PULLUP);
 	
 	//get initial state. Function asumes only one pin is low
 	if(!pio_get(ENC_PORT, PIO_TYPE_PIO_INPUT, ENC_A_PIN))
@@ -83,13 +84,25 @@ void encoder_init (void)
 	pio_enable_interrupt(ENC_PORT, ENC_A_PIN);
 	pio_enable_interrupt(ENC_PORT, ENC_B_PIN);
 	pio_enable_interrupt(ENC_PORT, ENC_C_PIN);
-	NVIC_ClearPendingIRQ(PIOA_IRQn);
 	NVIC_EnableIRQ(PIOA_IRQn);
+	NVIC_ClearPendingIRQ(PIOA_IRQn);
 }
 
-void encoder_reset (void)
+void encoder_reset (void) // quick fix for interrupts fiering unexpectedly at the begining
 {
 	enc_movment = 0;
+	if(!pio_get(ENC_PORT, PIO_TYPE_PIO_INPUT, ENC_A_PIN))
+	{
+		enc_oldstate = ENC_STATE_A;
+	}
+	else if (!pio_get(ENC_PORT, PIO_TYPE_PIO_INPUT, ENC_B_PIN))
+	{
+		enc_oldstate = ENC_STATE_B;
+	}
+	else if (!pio_get(ENC_PORT, PIO_TYPE_PIO_INPUT, ENC_C_PIN))
+	{
+		enc_oldstate = ENC_STATE_C;
+	}
 }
 
 int32_t encoder_get (void)
