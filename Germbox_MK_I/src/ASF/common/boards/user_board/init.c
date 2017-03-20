@@ -13,9 +13,23 @@
 #include <conf_board.h>
 #include "wdt.h"
 
+#include "heater.h"
+#include "stimer.h"
+#include "pump.h"
+#include "display.h"
+#include "thermo.h"
+#include "encoder.h"
+
 void board_init(void)
 {
 	wdt_disable(WDT);
+	heater_init();
+	pump_init();
+	stimer_init();
+	thermo_init();
+	display_init();
+	encoder_init();
+	encoder_reset();
 	/* This function is meant to contain board-specific initialization code
 	 * for, e.g., the I/O pins. The initialization can rely on application-
 	 * specific board configuration, found in conf_board.h.

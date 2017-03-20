@@ -31,8 +31,6 @@ void heater_init(void)
 	pwm_clk.ul_mck = 32000000;
 	pwm_init(PWM, &pwm_clk);
 	
-	
-	
 	pwm_ch_instance.ul_prescaler = PWM_CMR_CPRE_CLKA;
 	pwm_ch_instance.ul_period = 100;
 	pwm_ch_instance.ul_duty = 3;
