@@ -76,6 +76,7 @@ int main (void)
 	
 	display_init();
 	display_write_string(0, 0, bfr);
+	display_write_string(3, 15, bfr);
 	while(1)
 	{
 
