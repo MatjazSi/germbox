@@ -175,6 +175,8 @@ void display_init (void)
 
 void display_write_string (uint8_t row, uint8_t column, uint8_t *string)
 {
+	display_select_row(row);
+	display_select_column(column);
 	while(*string)
 	{
 		display_putch(*string++);
