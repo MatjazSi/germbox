@@ -29,6 +29,7 @@ void board_init(void)
 	thermo_init();
 	display_init();
 	encoder_init();
+	encoder_reset();
 	/* This function is meant to contain board-specific initialization code
 	 * for, e.g., the I/O pins. The initialization can rely on application-
 	 * specific board configuration, found in conf_board.h.

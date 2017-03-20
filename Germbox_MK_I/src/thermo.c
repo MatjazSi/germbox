@@ -34,5 +34,5 @@ float thermo_get_temp (void)
 	}
 	adc /= THERMO_AVERAGING;
 	adc += GROUND_SENSOR_ADC_OFS;
-	return (((adc * REF_V) / 4096) * GROUND_SENSOR_GAIN);
+	return ((((adc * REF_V) / 4096) * GROUND_SENSOR_GAIN) + GROUND_SENSOR_OFFSET);
 }
