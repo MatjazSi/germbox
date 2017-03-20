@@ -27,7 +27,8 @@
 
 //Ground temp sensor config
 #define GROUND_TEMP_PORT			PIOB
-#define GROIND_TEMP_PIN				PIO_PB3
+#define GROUND_TEMP_PIN				PIO_PB3
+#define GROUND_TEMP_ADC_CH			ADC_CHANNEL_7
 
 //Air temp  sensor config
 

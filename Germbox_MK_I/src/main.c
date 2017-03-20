@@ -35,6 +35,7 @@
 #include "stimer.h"
 #include "pump.h"
 #include "display.h"
+#include "thermo.h"
 
 #include "adc.h"
 #include "wdt.h"
@@ -61,12 +62,14 @@ int main (void)
 
 	
 	uint8_t bfr [] = "St. patrick's day";
+	volatile float temp;
 	
 	sysclk_init();
 	board_init();
 	heater_init();
 	pump_init();
 	stimer_init();
+	thermo_init();
 
 	pio_set_output(PIOA, PIO_PA15, LOW, DISABLE, DISABLE);
 	
@@ -79,7 +82,8 @@ int main (void)
 	display_write_string(3, 15, bfr);
 	while(1)
 	{
-
+		temp = thermo_get_temp();
+		asm("nop");
 	}
 	
 	
