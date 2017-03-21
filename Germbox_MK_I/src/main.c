@@ -46,11 +46,11 @@
 #define PRINT_TIMER	1 // timer for printing things over usb
 
 
-#define KP	30 //30
+#define KP	45 //30
 #define KI	0.07//0.004
-#define KD	8		//8
+#define KD	20		//8
 
-#define  I_MAX		50
+#define  I_MAX		700
 
 /* best so far (PI)
 #define KP	90
@@ -106,7 +106,8 @@ int main (void)
 	//init PID
 	pid_init(TYPE_PID, KP, KI, KD, &tPid);
 	pid_set_max_integral(I_MAX, &tPid);
-	pid_set_limit(100, &tPid);
+	pid_set_limit(100.0, 0, &tPid);
+	pid_anty_windup_enable(&tPid);
 	
 	
 	//init timer that will trigger PID controller
@@ -126,10 +127,6 @@ int main (void)
 		if(time_expired) // time to execut pid controll loop
 		{
 			power = pid_execute(&tPid, (set_temp - temp));
-			if(power < 0)
-			{
-				power = 0;
-			}
 			heater_set((uint8_t)power);
 			time_expired = 0;
 			

@@ -26,8 +26,11 @@ void pid_init (unsigned char cType, float Pcoeff, float Icoeff, float Dcoeff, st
 	pid->oldError = 0;
 	pid->sum = 0;
 	pid->maxIntegrall = PID_DEFAULT_MAX_INTEGRALL;
-	pid->limit = 0;
+	pid->upper_limit = 0;
+	pid->lower_limit = 0;
 	pid->deadband = 0;
+	pid->anti_windup = 0;
+	pid->old_out = 0;
 }
 
 void pid_set_P_coefficient (float coeff, struct pidStruct *pid)
@@ -50,9 +53,14 @@ void pid_set_max_integral (unsigned long max, struct pidStruct *pid)
 	pid->maxIntegrall = max;
 }
 
-void pid_set_limit (unsigned long lim, struct pidStruct *pid)
+void pid_set_limit (float u_lim, float l_lim, struct pidStruct *pid)
 {
-	pid->limit = lim;
+	if(l_lim < u_lim)
+	{
+		pid->upper_limit = u_lim;
+		pid->lower_limit = l_lim;
+	}
+	
 }		
 
 void pid_set_deadband (unsigned long band, struct pidStruct *pid)
@@ -63,6 +71,11 @@ void pid_set_deadband (unsigned long band, struct pidStruct *pid)
 void pid_reset_int (struct pidStruct *pid)
 {
 	pid -> sum = 0;
+}
+
+void pid_anty_windup_enable (struct pidStruct *pid)
+{
+	pid->anti_windup = 1;
 }
 
 float pid_execute (struct pidStruct *pid, float error)
@@ -92,10 +105,24 @@ float pid_execute (struct pidStruct *pid, float error)
 		pid->oldError = error;
 	}
 	output = pTerm + iTerm + dTerm;
-	if(pid->limit != 0)
+	if((pid->lower_limit != 0) || (pid->upper_limit != 0))
 	{
-		if(output > pid->limit) {output = pid->limit;}
-		else if(output < -pid->limit) {output = -pid->limit;}
+		if(output > pid->upper_limit) 
+		{
+			output = pid->upper_limit;
+			if(pid->anti_windup)
+			{
+				pid->sum = 0;
+			}
+		}
+		else if(output < -pid->lower_limit) 
+		{
+			output = -pid->lower_limit;
+			if(pid->anti_windup)
+			{
+				pid->sum = 0;
+			}
+		}
 	}
 	return output;	
 }
