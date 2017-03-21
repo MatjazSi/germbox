@@ -50,7 +50,7 @@
 #define KI	0.07//0.004
 #define KD	8		//8
 
-#define  I_MAX		2500
+#define  I_MAX		50
 
 /* best so far (PI)
 #define KP	90
@@ -136,11 +136,22 @@ int main (void)
 		}
 		if(ttp) // time to print out things over USB
 		{
+			
+			
 			float_split(set_temp, &whole, &decimal);
 			str_pos = sprintf(str, "$%2u.%1u", whole, decimal);
 			float_split(temp, &whole, &decimal);
 			str_pos += sprintf(str + (str_pos), ", %2u.%1u;", whole, decimal );
 			udi_cdc_write_buf(str, str_pos);
+			
+			/*
+			float_split(set_temp, &whole, &decimal);
+			str_pos = sprintf(str, "$%2u.%1u", whole, decimal);
+			float_split(temp, &whole, &decimal);
+			str_pos += sprintf(str + (str_pos), ", %2u.%1u", whole, decimal );
+			str_pos += sprintf(str + (str_pos), ", %d;", (uint32_t)tPid.sum );
+			udi_cdc_write_buf(str, str_pos);
+			*/
 			ttp = 0;
 		}
 		//dispaly handling
