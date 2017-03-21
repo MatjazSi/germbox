@@ -43,6 +43,7 @@
 
 
 #define PID_TIMER	0 // stimer channel number
+#define PRINT_TIMER	1 // timer for printing things over usb
 
 
 #define KP	150
@@ -58,6 +59,7 @@
 #define DEFAULT_SET_T	29.0
 
 	volatile uint32_t time_expired = 0;
+	volatile uint32_t ttp = 0;		// time to print
 
 void float_split (float input, uint32_t* wh, uint32_t* dec)
 {
@@ -72,10 +74,16 @@ void pid_timeout(void)
 	time_expired = 1;
 }
 
+void time_to_print(void)
+{
+	ttp = 1;
+}
+
 int main (void)
 {
 
 	float temp, power, set_temp = DEFAULT_SET_T;
+	uint8_t str_pos = 0;
 	uint32_t whole, decimal;
 	int32_t pulses;
 	uint8_t str[20];
@@ -98,6 +106,10 @@ int main (void)
 	stimer_set_time(PID_TIMER, 200, 1);
 	stimer_register_callback(PID_TIMER, pid_timeout);
 	stimer_start(PID_TIMER);
+	
+	stimer_set_time(PRINT_TIMER, 1000, 1);
+	stimer_register_callback(PRINT_TIMER, time_to_print);
+	stimer_start(PRINT_TIMER);
 
 	display_clear();
 	while(1)
@@ -113,9 +125,16 @@ int main (void)
 			}
 			heater_set((uint8_t)power);
 			time_expired = 0;
-			sprintf(str, "Test\n\r");
-			udi_cdc_write_buf(str, 7);
 			
+		}
+		if(ttp) // time to print out things over USB
+		{
+			float_split(set_temp, &whole, &decimal);
+			str_pos = sprintf(str, "%2u.%1u,", whole, decimal);
+			float_split(temp, &whole, &decimal);
+			str_pos += sprintf(str + (str_pos), " %2u.%1u\n\r", whole, decimal );
+			udi_cdc_write_buf(str, str_pos);
+			ttp = 0;
 		}
 		//dispaly handling
 		float_split(set_temp, &whole, &decimal);
