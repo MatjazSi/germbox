@@ -40,6 +40,7 @@ void pid_set_D_coefficient (float coeff, struct pidStruct *pid);
 void pid_set_max_integral (unsigned long max, struct pidStruct *pid);
 void pid_set_limit (unsigned long lim, struct pidStruct *pid);
 void pid_set_deadband (unsigned long band, struct pidStruct *pid);
+void pid_reset_int (struct pidStruct *pid);
 float pid_execute (struct pidStruct *pid, float error);
 
 

@@ -60,6 +60,11 @@ void pid_set_deadband (unsigned long band, struct pidStruct *pid)
 	pid->deadband = band;
 }
 
+void pid_reset_int (struct pidStruct *pid)
+{
+	pid -> sum = 0;
+}
+
 float pid_execute (struct pidStruct *pid, float error)
 {
 	float pTerm = 0, iTerm = 0, dTerm = 0, output = 0;

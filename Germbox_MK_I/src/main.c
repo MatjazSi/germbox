@@ -46,9 +46,9 @@
 #define PRINT_TIMER	1 // timer for printing things over usb
 
 
-#define KP	80
-#define KI	0
-#define KD	0
+#define KP	30 //30
+#define KI	0.004 //0.001
+#define KD	8		//8
 
 /* best so far (PI)
 #define KP	90
@@ -89,7 +89,7 @@ void time_to_print(void)
 int main (void)
 {
 
-	float temp, power, set_temp = DEFAULT_SET_T;
+	float temp, power, set_temp = DEFAULT_SET_T, old_set_temp = 0;
 	uint8_t str_pos = 0;
 	uint32_t whole, decimal;
 	int32_t pulses;
@@ -102,12 +102,10 @@ int main (void)
 	udc_start();
 	
 	//init PID
-	tPid.cP = KP;
-	tPid.cI = KI;
-	tPid.cD = KD;
-	tPid.type = TYPE_PID;
-	tPid.maxIntegrall = 1000;
-	tPid.limit = 100;
+	pid_init(TYPE_PID, KP, KI, KD, &tPid);
+	pid_set_max_integral(5000, &tPid);
+	pid_set_limit(100, &tPid);
+	
 	
 	//init timer that will trigger PID controller
 	stimer_set_time(PID_TIMER, 200, 1);
@@ -137,9 +135,9 @@ int main (void)
 		if(ttp) // time to print out things over USB
 		{
 			float_split(set_temp, &whole, &decimal);
-			str_pos = sprintf(str, "%2u.%1u,", whole, decimal);
+			str_pos = sprintf(str, "$%2u.%1u", whole, decimal);
 			float_split(temp, &whole, &decimal);
-			str_pos += sprintf(str + (str_pos), " %2u.%1u\n\r", whole, decimal );
+			str_pos += sprintf(str + (str_pos), ", %2u.%1u;", whole, decimal );
 			udi_cdc_write_buf(str, str_pos);
 			ttp = 0;
 		}
@@ -157,6 +155,10 @@ int main (void)
 		//encoder handling
 		pulses = encoder_get();
 		set_temp += (pulses * 0.5);
+		if(pulses)
+		{
+			pid_reset_int(&tPid);
+		}
 	}
 	
 }
