@@ -47,8 +47,10 @@
 
 
 #define KP	30 //30
-#define KI	0.004 //0.001
+#define KI	0.07//0.004
 #define KD	8		//8
+
+#define  I_MAX		2500
 
 /* best so far (PI)
 #define KP	90
@@ -103,7 +105,7 @@ int main (void)
 	
 	//init PID
 	pid_init(TYPE_PID, KP, KI, KD, &tPid);
-	pid_set_max_integral(5000, &tPid);
+	pid_set_max_integral(I_MAX, &tPid);
 	pid_set_limit(100, &tPid);
 	
 	
