@@ -32,12 +32,15 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include "asf.h""
+
 #include "pid.h"
 #include "stimer.h"
 #include "display.h"
 #include "heater.h"
 #include "thermo.h"
 #include "encoder.h"
+
 
 #define PID_TIMER	0 // stimer channel number
 
@@ -81,6 +84,8 @@ int main (void)
 	sysclk_init();
 	board_init();
 	
+	udc_start();
+	
 	//init PID
 	tPid.cP = KP;
 	tPid.cI = KI;
@@ -108,6 +113,9 @@ int main (void)
 			}
 			heater_set((uint8_t)power);
 			time_expired = 0;
+			sprintf(str, "Test\n\r");
+			udi_cdc_write_buf(str, 7);
+			
 		}
 		//dispaly handling
 		float_split(set_temp, &whole, &decimal);
