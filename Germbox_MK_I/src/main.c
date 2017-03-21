@@ -42,9 +42,15 @@
 #define PID_TIMER	0 // stimer channel number
 
 
-#define KP	30
-#define KI	0.1
-#define KD	0.0
+#define KP	150
+#define KI	0.2
+#define KD	6
+
+/* best so far (PI)
+#define KP	90
+#define KI	0.01
+#define KD	0
+*/
 
 #define DEFAULT_SET_T	29.0
 
@@ -80,11 +86,11 @@ int main (void)
 	tPid.cI = KI;
 	tPid.cD = KD;
 	tPid.type = TYPE_PID;
-	tPid.maxIntegrall = 2500;
+	tPid.maxIntegrall = 1000;
 	tPid.limit = 100;
 	
 	//init timer that will trigger PID controller
-	stimer_set_time(PID_TIMER, 1000, 1);
+	stimer_set_time(PID_TIMER, 200, 1);
 	stimer_register_callback(PID_TIMER, pid_timeout);
 	stimer_start(PID_TIMER);
 
@@ -93,7 +99,7 @@ int main (void)
 	{
 		//get temperature
 		temp = thermo_get_temp();
-		if(time_expired) // time to eecut pid controll loop
+		if(time_expired) // time to execut pid controll loop
 		{
 			power = pid_execute(&tPid, (set_temp - temp));
 			if(power < 0)
