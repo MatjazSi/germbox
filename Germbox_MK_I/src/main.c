@@ -42,14 +42,21 @@
 #define PID_TIMER	0 // stimer channel number
 
 
-#define KP	150
-#define KI	0.2
-#define KD	6
+#define KP	80
+#define KI	0
+#define KD	0
 
 /* best so far (PI)
 #define KP	90
 #define KI	0.01
 #define KD	0
+*/
+
+/* old settings (PID)
+
+#define KP	150
+#define KI	0.2
+#define KD	6
 */
 
 #define DEFAULT_SET_T	29.0
