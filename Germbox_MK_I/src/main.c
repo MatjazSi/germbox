@@ -46,9 +46,9 @@
 #define PRINT_TIMER	1 // timer for printing things over usb
 
 
-#define KP	20//30
-#define KI	0.09//0.004
-#define KD	600	//8
+#define KP	135//30
+#define KI	0//0.007
+#define KD	0	//8
 
 #define  I_MAX		400
 
