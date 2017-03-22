@@ -32,7 +32,6 @@ struct pidStruct
 	float lower_limit ;// kower limit of pid output
 	float deadband; //deadband
 	uint8_t anti_windup; // true if anty windup tehniqe is used
-	float old_out;
 };
 
 typedef struct pidStruct pidstruct_t;

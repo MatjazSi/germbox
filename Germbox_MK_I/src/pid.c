@@ -30,7 +30,6 @@ void pid_init (unsigned char cType, float Pcoeff, float Icoeff, float Dcoeff, st
 	pid->lower_limit = 0;
 	pid->deadband = 0;
 	pid->anti_windup = 0;
-	pid->old_out = 0;
 }
 
 void pid_set_P_coefficient (float coeff, struct pidStruct *pid)
