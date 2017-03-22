@@ -18,6 +18,11 @@ void thermo_init(void)
 	pio_set_input(GROUND_TEMP_PORT, GROUND_TEMP_PIN, 0);	
 	adc_init(ADC, 36000000, 2000000, 8);
 	adc_configure_timing(ADC, 0, ADC_SETTLING_TIME_3, 1);
+	
+	//set gain of temp sesnor channels to 4
+	adc_enable_anch(ADC);
+	adc_set_channel_input_gain(ADC, GROUND_TEMP_ADC_CH, ADC_GAINVALUE_3);
+	
 }
 
 float thermo_get_temp (void)
@@ -34,5 +39,5 @@ float thermo_get_temp (void)
 	}
 	adc /= THERMO_AVERAGING;
 	adc += GROUND_SENSOR_ADC_OFS;
-	return (((adc * REF_V) / 4096) * GROUND_SENSOR_GAIN);
+	return (((adc * REF_V) / (4096 * GROUND_SENSOR_ADC_GAIN)) * GROUND_SENSOR_GAIN);
 }
