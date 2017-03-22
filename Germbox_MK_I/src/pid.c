@@ -30,6 +30,8 @@ void pid_init (unsigned char cType, float Pcoeff, float Icoeff, float Dcoeff, st
 	pid->lower_limit = 0;
 	pid->deadband = 0;
 	pid->anti_windup = 0;
+	pid->cycles = 0;
+	pid->cycyles_count = 0;
 }
 
 void pid_set_P_coefficient (float coeff, struct pidStruct *pid)
@@ -100,8 +102,25 @@ float pid_execute (struct pidStruct *pid, float error)
 	//calculate d term if enabled
 	if(pid->type == TYPE_PD || pid->type == TYPE_PID)
 	{
-		dTerm = pid->cD * (error - pid->oldError);
-		pid->oldError = error;
+		if(pid->cycyles_count)  // implements execution of D on nNOT every itteration
+		{
+			if(pid->cycles == 0)
+			{
+				dTerm = pid->cD * (error - pid->oldError);
+				pid->oldError = error;
+				pid->cycles = pid->cycyles_count;
+			}
+			else
+			{
+				pid->cycles--;
+			}
+		}
+		else
+		{
+			dTerm = pid->cD * (error - pid->oldError);
+			pid->oldError = error;
+		}
+		
 	}
 	output = pTerm + iTerm + dTerm;
 	if((pid->lower_limit != 0) || (pid->upper_limit != 0))

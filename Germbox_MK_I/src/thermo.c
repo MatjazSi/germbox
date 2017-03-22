@@ -37,18 +37,5 @@ float thermo_get_temp (void)
 	}
 	adc /= THERMO_AVERAGING;
 	adc += GROUND_SENSOR_ADC_OFS;
-	//return (((adc * REF_V) / 4096) * GROUND_SENSOR_GAIN);
-	//do rounding on one decimal palace
-	temp = (((adc * REF_V) / 4096) * GROUND_SENSOR_GAIN);
-	whole = roundf(temp);
-	decimal = temp - whole;
-	temp = decimal * 10;
-	whole += (roundf(temp) / 10);
-	if(whole - (roundf(whole)) > 0.5)
-	{
-		whole += 0.1;
-	}
-		
-	return whole;
-	
+	return (((adc * REF_V) / 4095) * GROUND_SENSOR_GAIN);
 }

@@ -46,9 +46,9 @@
 #define PRINT_TIMER	1 // timer for printing things over usb
 
 
-#define KP	135//30
-#define KI	0//0.007
-#define KD	0	//8
+#define KP	25//20
+#define KI	0.05//0.04
+#define KD	150	//0
 
 #define  I_MAX		400
 
@@ -108,6 +108,7 @@ int main (void)
 	pid_set_max_integral(I_MAX, &tPid);
 	pid_set_limit(100.0, 0, &tPid);
 	pid_anty_windup_enable(&tPid);
+	tPid.cycyles_count = 3;
 	
 	
 	//init timer that will trigger PID controller
