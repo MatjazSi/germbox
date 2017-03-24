@@ -141,9 +141,9 @@ float pid_execute (struct pidStruct *pid, float error)
 			output = pid->upper_limit;
 			
 		}
-		else if(output < -pid->lower_limit) 
+		else if(output < pid->lower_limit) 
 		{
-			output = -pid->lower_limit;
+			output = pid->lower_limit;
 			
 		}
 	}
