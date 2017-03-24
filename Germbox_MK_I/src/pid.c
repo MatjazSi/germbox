@@ -5,7 +5,7 @@
  *  Author: Matjaž
  */ 
 
-/*execution time -O3:
+/*execution time ON AVR -O3:
 PID:	1210
 PI:		1036
 PD:		920
@@ -81,7 +81,7 @@ void pid_anty_windup_enable (struct pidStruct *pid)
 
 float pid_execute (struct pidStruct *pid, float error)
 {
-	float pTerm = 0, iTerm = 0, dTerm = 0, output = 0;
+	float pTerm = 0,  dTerm = 0, output = 0;
 	if(pid->deadband != 0) // deadband
 	{
 		if(abs(error) < pid->deadband) {error = 0;}
@@ -93,10 +93,21 @@ float pid_execute (struct pidStruct *pid, float error)
 	//calculate i term if enabled
 	if(pid->type == TYPE_PI || pid->type == TYPE_PID)
 	{
-		pid->sum += error;
-		if(pid->sum > (float)pid->maxIntegrall) {pid->sum = pid->maxIntegrall;} //prevents integral windup
-		else if(pid->sum < -(float)pid->maxIntegrall) {pid->sum = -pid->maxIntegrall;}
-		iTerm = pid->cI * pid->sum;
+		pid->sum += (error * pid->cI);
+		if(pid->anti_windup)
+			{
+				if(pid->sum > pid->upper_limit)
+				{
+					pid->sum = pid->upper_limit;
+				}
+				else if(pid->sum < pid->lower_limit)
+				{
+					pid->sum = pid->lower_limit;
+				}
+					
+			}
+		//if(pid->sum > (float)pid->maxIntegrall) {pid->sum = pid->maxIntegrall;} //prevents integral windup
+		//else if(pid->sum < -(float)pid->maxIntegrall) {pid->sum = -pid->maxIntegrall;}
 	}
 	
 	//calculate d term if enabled
@@ -122,24 +133,18 @@ float pid_execute (struct pidStruct *pid, float error)
 		}
 		
 	}
-	output = pTerm + iTerm + dTerm;
+	output = pTerm + pid->sum + dTerm;
 	if((pid->lower_limit != 0) || (pid->upper_limit != 0))
 	{
 		if(output > pid->upper_limit) 
 		{
 			output = pid->upper_limit;
-			if(pid->anti_windup)
-			{
-				pid->sum = 0;
-			}
+			
 		}
 		else if(output < -pid->lower_limit) 
 		{
 			output = -pid->lower_limit;
-			if(pid->anti_windup)
-			{
-				pid->sum = 0;
-			}
+			
 		}
 	}
 	return output;	

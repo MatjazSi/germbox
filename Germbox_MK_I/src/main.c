@@ -46,9 +46,9 @@
 #define PRINT_TIMER	1 // timer for printing things over usb
 
 
-#define KP	25//20
-#define KI	0.05//0.04
-#define KD	150	//0
+#define KP	30//55
+#define KI	0.06//0.06
+#define KD	70//15
 
 #define  I_MAX		400
 
@@ -63,6 +63,21 @@
 #define KP	150
 #define KI	0.2
 #define KD	6
+*/
+
+
+/* Underdamped (PID)
+
+#define KP	25
+#define KI	0.01
+#define KD	250
+*/
+
+/* kind of ok (PID)
+
+#define KP	25
+#define KI	0.05
+#define KD	250
 */
 
 #define DEFAULT_SET_T	29.0
@@ -108,7 +123,7 @@ int main (void)
 	pid_set_max_integral(I_MAX, &tPid);
 	pid_set_limit(100.0, 0, &tPid);
 	pid_anty_windup_enable(&tPid);
-	tPid.cycyles_count = 3;
+	tPid.cycyles_count = 0;
 	
 	
 	//init timer that will trigger PID controller
