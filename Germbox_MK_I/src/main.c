@@ -50,7 +50,7 @@
 #define KI	0.06//0.06
 #define KD	70//15
 
-#define  I_MAX		400
+#define  I_MAX 400
 
 /* best so far (PI)
 #define KP	90
