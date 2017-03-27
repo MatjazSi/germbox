@@ -93,8 +93,8 @@ float pid_execute (struct pidStruct *pid, float error)
 	//calculate i term if enabled
 	if(pid->type == TYPE_PI || pid->type == TYPE_PID)
 	{
-		iTerm = (error * pid->cI);
-		pid->sum += iTerm;
+		pid->sum += error;
+		iTerm = (pid->sum * pid->cI);
 		//if(pid->sum > (float)pid->maxIntegrall) {pid->sum = pid->maxIntegrall;} //prevents integral windup
 		//else if(pid->sum < -(float)pid->maxIntegrall) {pid->sum = -pid->maxIntegrall;}
 	}
@@ -114,7 +114,11 @@ float pid_execute (struct pidStruct *pid, float error)
 		{
 			if(pid->anti_windup)
 			{
-				pid->sum -= iTerm;		
+				if(error > 0)
+				{
+					pid->sum -= error;
+				}
+						
 			}
 			output = pid->upper_limit;
 			
@@ -123,7 +127,10 @@ float pid_execute (struct pidStruct *pid, float error)
 		{
 			if(pid->anti_windup)
 			{
-				pid->sum -= iTerm;
+				if(error < 0)
+				{
+					pid->sum -= error;
+				}
 			}
 			output = pid->lower_limit;
 		}
