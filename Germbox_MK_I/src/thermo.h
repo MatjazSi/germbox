@@ -17,9 +17,8 @@
 #define THERMO_AVERAGING		32				//number of measurments for averaging	
 
 #define MOISTURE_AVERAGING				32		//number of measurents for averaging
-#define MOISTURE_OFFSET					0		//moisture offset
-#define MOISTURE_DIV_FACTOR				1		//division factor
-
+#define MOISTURE_OFFSET					-3330	//moisture offset
+#define MOISTURE_DIV_FACTOR				27		//division factor
 
 void thermo_init(void);
 float thermo_get_temp (void);

@@ -48,7 +48,7 @@ float thermo_get_temp (void)
 
 uint16_t thermo_get_moisture (void)
 {
-	uint32_t adc;
+	int32_t adc;
 	uint8_t n;
 	adc_enable_channel(ADC, GROUND_MOISTURE_ADC_CH);
 	adc = 0;
@@ -59,7 +59,11 @@ uint16_t thermo_get_moisture (void)
 		adc += adc_get_latest_value(ADC);
 	}
 	adc /= MOISTURE_AVERAGING;
-	adc += MOISTURE_OFFSET;
 	adc_disable_channel(ADC, GROUND_MOISTURE_ADC_CH);
+	adc = (adc + MOISTURE_OFFSET) / MOISTURE_DIV_FACTOR;
+	if(adc < 0) 
+	{
+		adc = 0;	
+	}
 	return adc;
 }
