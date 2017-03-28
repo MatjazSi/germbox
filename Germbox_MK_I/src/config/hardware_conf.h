@@ -33,8 +33,9 @@
 //Air temp  sensor config
 
 //Ground moisture sensor config
-#define GROUND_TEMP_PORT			PIOB
-#define GROIND_TEMP_PIN				PIO_PB1
+#define GROUND_MOISTURE_PORT			PIOB
+#define GROUND_MOISTURE_PIN				PIO_PB1
+#define GROUND_MOISTURE_ADC_CH			ADC_CHANNEL_5
 
 //Encoder config
 #define ENC_PORT					PIOB

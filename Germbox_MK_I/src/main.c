@@ -83,6 +83,7 @@ int main (void)
 	while(1)
 	{
 		temp = thermo_get_temp();
+		temp = thermo_get_moisture();
 		asm("nop");
 	}
 	
