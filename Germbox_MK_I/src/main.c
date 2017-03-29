@@ -52,6 +52,10 @@
 
 #define  I_MAX 400
 
+#define DEFAULT_SET_T	29.0
+
+//#define PRINT_OVER_USB //uncoment if you want controller to prnt data out over USB
+
 /* best so far (PI)
 #define KP	90
 #define KI	0.01
@@ -80,7 +84,7 @@
 #define KD	250
 */
 
-#define DEFAULT_SET_T	29.0
+
 
 	volatile uint32_t time_expired = 0;
 	volatile uint32_t ttp = 0;		// time to print
@@ -107,7 +111,7 @@ int main (void)
 {
 
 	float temp, power, set_temp = DEFAULT_SET_T, old_set_temp = 0;
-	uint8_t str_pos = 0;
+	uint8_t str_pos = 0, humid;
 	uint32_t whole, decimal;
 	int32_t pulses;
 	uint8_t str[20];
@@ -116,7 +120,9 @@ int main (void)
 	sysclk_init();
 	board_init();
 	
-	udc_start();
+	#ifdef PRINT_OVER_USB	
+		udc_start();
+	#endif
 	
 	//init PID
 	pid_init(TYPE_PID, KP, KI, KD, &tPid);
@@ -140,6 +146,7 @@ int main (void)
 	{
 		//get temperature
 		temp = thermo_get_temp();
+		humid = thermo_get_moisture();
 		if(time_expired) // time to execut pid controll loop
 		{
 			power = pid_execute(&tPid, (set_temp - temp));
@@ -147,6 +154,7 @@ int main (void)
 			time_expired = 0;
 			
 		}
+		#ifdef PRINT_OVER_USB
 		if(ttp) // time to print out things over USB
 		{
 			
@@ -167,6 +175,7 @@ int main (void)
 			*/
 			ttp = 0;
 		}
+		#endif
 		//dispaly handling
 		float_split(set_temp, &whole, &decimal);
 		sprintf(str, "SET:%2u.%1u °C", whole, decimal);
@@ -178,6 +187,10 @@ int main (void)
 		
 		sprintf(str, "PWR:%3u ", (uint32_t)power);
 		display_write_string(2, 0, str);
+		
+		sprintf(str, "HUM:%2u", humid);
+		display_write_string(3, 0, str);
+		
 		//encoder handling
 		pulses = encoder_get();
 		set_temp += (pulses * 0.5);
