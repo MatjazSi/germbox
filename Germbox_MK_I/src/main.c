@@ -65,7 +65,7 @@
 #define HUMID_TRESHOLD			4 // treshild between short and long wattering duration
 
 
-#define PRINT_OVER_USB //uncoment if you want controller to prnt data out over USB
+//#define PRINT_OVER_USB //uncoment if you want controller to prnt data out over USB
 
 /* best so far (PI)
 #define KP	90
@@ -101,10 +101,10 @@ volatile uint32_t time_expired = 0, watering_expired = 0; // indicator flags
 volatile uint32_t ttp = 0;		// time to print
 
 volatile uint32_t expired_time = 0;
+volatile uint32_t water_timer = 0;
 
 void min_count (void)
 {
-	static uint32_t water_timer = 0;
 	water_timer++;
 	expired_time++;
 	
@@ -164,7 +164,10 @@ int main (void)
 {
 
 	float temp, power, set_temp = DEFAULT_SET_T, old_set_temp = 0;
-	uint8_t str_pos = 0, humid, set_humid = DEFAULT_SET_HUMID;
+	uint8_t str_pos = 0, humid;
+	uint8_t chars = 0, old_pb = 1, pb = 0;
+	uint8_t days, hrs, mins;
+	int8_t set_humid = DEFAULT_SET_HUMID;
 	volatile uint8_t selector = 0;  // selector 0 -> seting temperature, selector -> setting humidity
 	uint32_t whole, decimal;
 	int32_t pulses;
@@ -198,6 +201,8 @@ int main (void)
 	stimer_start(PRINT_TIMER);
 
 	display_clear();
+	water(10);
+	
 	while(1)
 	{
 		//get temperature
@@ -252,28 +257,92 @@ int main (void)
 		}
 		#endif
 		//dispaly handling
+		days = expired_time / (24*60);
+		hrs = (expired_time - (60 * 24 * days)) / 60;
+		mins = (expired_time - (60 * 24 * days)) % 60;
+		
 		float_split(set_temp, &whole, &decimal);
-		sprintf(str, "SET T:%2u.%1u C  SET H:%2u", whole, decimal, set_humid);
+		chars = sprintf(str, "SET T:%2u.%1u C ", whole, decimal);
+		if(selector)
+		{
+			sprintf(str + chars, " ");
+		}
+		else
+		{
+			sprintf(str + chars, "<");
+		}
 		display_write_string(0, 0, str);
+		
+		chars = sprintf(str, "SET H:  %2u", set_humid);
+		if(selector)
+		{
+			sprintf(str + chars, "   <");
+		}
+		else
+		{
+			sprintf(str + chars, "    ");
+		}
+		display_write_string(1, 0, str);
 		
 		float_split(temp, &whole, &decimal);
 		sprintf(str, "TMP:%2u.%1u C, H:%2u", whole, decimal, humid);
-		display_write_string(1, 0, str);
-		
-		sprintf(str, "PWR:%3u ", (uint32_t)power);
 		display_write_string(2, 0, str);
 		
-		sprintf(str, "HUM:%2u", humid);
+		sprintf(str, "PWR:%3u ", (uint32_t)power);
 		display_write_string(3, 0, str);
+		
+		sprintf(str, "DURATION:%2ud:%02uh:%02um", days, hrs, mins);
+		display_write_string(4, 0, str);
+		
+		sprintf(str, "NEXT:%2uh:%02um", (WATTERING_INTERVAL - water_timer) / 60,  (WATTERING_INTERVAL - water_timer) % 60);
+		display_write_string(5, 0, str);
 		
 		//encoder handling
 		pulses = encoder_get();
-		set_temp += (pulses * 0.5);
-		if(pulses)
+		if(selector)
+		{
+			set_humid += pulses;
+			if(set_humid > 10)
+			{
+				set_humid = 10;
+			}
+			else if (set_humid < 0)
+			{
+				set_humid = 0;
+			}
+		}
+		else
+		{
+			set_temp += (pulses * 0.5);
+			if(set_temp > 40.0)
+			{
+				set_temp = 40.0;
+			}
+			else if (set_temp < 10.0)
+			{
+				set_temp = 10.0;
+			}
+		}
+		
+		if(pulses && (!selector))
 		{
 			pid_reset_int(&tPid);
 		}
-		if()
+		
+		pb = encoder_get_pb();
+		if(pb != old_pb)
+		{
+			old_pb = pb;
+			if(!pb)
+			{
+				selector++;
+				if(selector > 1)
+				{
+					selector = 0;
+				}	
+			}
+			
+		}
 	}
 	
 }
