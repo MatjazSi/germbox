@@ -111,3 +111,8 @@ int32_t encoder_get (void)
 	enc_movment = 0;
 	return temp;
 }
+
+uint8_t encoder_get_pb (void)
+{
+	return pio_get(ENC_PORT, PIO_TYPE_PIO_INPUT, ENC_SW_PIN);
+}
