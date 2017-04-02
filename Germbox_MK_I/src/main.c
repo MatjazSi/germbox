@@ -165,6 +165,7 @@ int main (void)
 
 	float temp, power, set_temp = DEFAULT_SET_T, old_set_temp = 0;
 	uint8_t str_pos = 0, humid, set_humid = DEFAULT_SET_HUMID;
+	volatile uint8_t selector = 0;  // selector 0 -> seting temperature, selector -> setting humidity
 	uint32_t whole, decimal;
 	int32_t pulses;
 	uint8_t str[20];
@@ -252,11 +253,11 @@ int main (void)
 		#endif
 		//dispaly handling
 		float_split(set_temp, &whole, &decimal);
-		sprintf(str, "SET:%2u.%1u °C", whole, decimal);
+		sprintf(str, "SET T:%2u.%1u C  SET H:%2u", whole, decimal, set_humid);
 		display_write_string(0, 0, str);
 		
 		float_split(temp, &whole, &decimal);
-		sprintf(str, "TMP:%2u.%1u °C", whole, decimal);
+		sprintf(str, "TMP:%2u.%1u C, H:%2u", whole, decimal, humid);
 		display_write_string(1, 0, str);
 		
 		sprintf(str, "PWR:%3u ", (uint32_t)power);
@@ -272,6 +273,7 @@ int main (void)
 		{
 			pid_reset_int(&tPid);
 		}
+		
 	}
 	
 }
