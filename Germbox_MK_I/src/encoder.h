@@ -16,4 +16,5 @@
 void encoder_init (void);
 void encoder_reset (void);
 int32_t encoder_get (void);
+uint8_t encoder_get_pb (void);
 #endif /* ENCODER_H_ */
