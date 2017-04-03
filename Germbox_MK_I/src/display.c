@@ -1,9 +1,16 @@
-/*
- * display.c
+/**
+ * @file display.c
+ * @author Siworks
+ * @date 3 Apr 2017
+ * @brief Basic Oled display routines for SSD1603
  *
- * Created: 17. 03. 2017 01:35:00
- *  Author: matja
- */ 
+ * 
+ *  Dipslay usage is limited to text only. The only supported font is 5X7.
+ *	Text must be aligned to Page number
+ * 
+ * 
+ */
+
 
 #include "display.h"
 #include "font.h"
@@ -15,6 +22,12 @@
 
 twi_packet_t twiPacket;
 
+/**
+ * @brief Writes data do dispaly registers
+ *
+ * @param reg_addr Register addres
+ * @param value Value to write to register
+ */
 static void display_write_reg (uint8_t reg_addr, uint8_t value)
 {
 	twiPacket.addr[0] = reg_addr;
@@ -25,6 +38,13 @@ static void display_write_reg (uint8_t reg_addr, uint8_t value)
 	twi_master_write(TWI0, &twiPacket);
 }
 
+/**
+ * @brief Writes buffer of data to display 
+ *
+ * @param start_addr Register start addres
+ * @param *buff pointer to buffer to be written to
+ * @param len lenght of buffer
+ */
 static void display_write_buffer(uint8_t start_addr, uint8_t* buff, uint32_t len)
 {
 	twiPacket.addr[0] = start_addr;
@@ -34,17 +54,30 @@ static void display_write_buffer(uint8_t start_addr, uint8_t* buff, uint32_t len
 	twiPacket.length = len;
 	twi_master_write(TWI0, &twiPacket);
 }
-
+/**
+ * @brief Writes comand to display
+ *
+ * @param com Comand number
+ */
 static void display_comand (uint8_t com)
 {
 	display_write_reg(0, com);
 }
 
+/**
+ * @brief Writes data to display
+ *
+ * @param data Data to be written
+ */
 void display_data (uint8_t data)
 {
 	display_write_reg(64, data);
 }
 
+/**
+ * @brief Initiates TWI interface in microcontroller
+ *
+ */
 static void twi_init (void)
 {
 	twi_options_t twiOptions;
@@ -67,7 +100,11 @@ static void twi_init (void)
 	
 	
 }
-
+/**
+ * @brief Selects a column to write to
+ *
+ * @param col Selected column
+ */
 static void display_select_column (uint8_t col)
 {
 	if(col > 128)
@@ -78,6 +115,11 @@ static void display_select_column (uint8_t col)
 	display_comand(0x10 | (col >> 4));
 }
 
+/**
+ * @brief Selects a row to write to
+ *
+ * @param row Selected row
+ */
 static void display_select_row (uint8_t row)
 {
 	if(row > 8)
@@ -87,6 +129,13 @@ static void display_select_row (uint8_t row)
 	display_comand(0xB0 | row);
 }
 
+/**
+ * @brief Writes a character to display
+ *
+ * Characters are stored in font.h file
+ *
+ * @param ch Character to write to dispaly
+ */
 static void display_putch (uint8_t ch)
 {
 	uint32_t offset = 0, sub_offset;
@@ -104,6 +153,10 @@ static void display_putch (uint8_t ch)
 	
 }
 
+/**
+ * @brief Clear the dispaly
+ *
+ */
 void display_clear (void)
 {
 	uint8_t page, col;
@@ -119,6 +172,11 @@ void display_clear (void)
 	}
 }
 
+/**
+ * @brief Initializes the display
+ *
+ * This function should be called before using dispaly
+ */
 void display_init (void)
 {
 	
@@ -173,6 +231,15 @@ void display_init (void)
 
 }
 
+/**
+ * @brief Writes an ASCII string to display 
+ *
+ * String should be zero terminated.
+ *
+ * @param row Row to write the text to
+ * @param column Start column
+ * @param *string String to be written
+ */
 void display_write_string (uint8_t row, uint8_t column, uint8_t *string)
 {
 	display_select_row(row);

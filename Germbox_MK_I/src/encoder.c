@@ -1,9 +1,17 @@
-/*
- * encoder.c
+/**
+ * @file encoder.c
+ * @author Siworks
+ * @date 3 Apr 2017
+ * @brief Support for rotary encoder
  *
- * Created: 19. 03. 2017 23:51:47
- *  Author: matja
- */ 
+ * 
+ *  Encoder uses external interrupt lines for rotation detection
+ *	and polling for pushbutton detection.
+ * 
+ * 
+ */
+
+ 
 #include "pio.h"
 #include "pio_handler.h"
 #include "pmc.h"
@@ -14,6 +22,9 @@
 volatile uint8_t enc_oldstate;
 volatile int32_t enc_movment;
 
+/**
+ * @brief ISR for pin A change interrupt
+ */
 static void pin_a_handler(void)
 {
 	if(enc_oldstate == ENC_STATE_C)
@@ -27,6 +38,9 @@ static void pin_a_handler(void)
 	enc_oldstate = ENC_STATE_A;
 }
 
+/**
+ * @brief ISR for pin B change interrupt
+ */
 static void pin_b_handler(void)
 {
 	if(enc_oldstate == ENC_STATE_A)
@@ -40,6 +54,9 @@ static void pin_b_handler(void)
 	enc_oldstate = ENC_STATE_B;
 }
 
+/**
+ * @brief ISR for pin C change interrupt
+ */
 static void pin_c_handler(void)
 {
 	if(enc_oldstate == ENC_STATE_B)
@@ -53,7 +70,11 @@ static void pin_c_handler(void)
 	enc_oldstate = ENC_STATE_C;
 }
 
-
+/**
+ * @brief Initiliazation of encoder
+ *
+ *	This functioon should be caled before usng encoder
+ */
 void encoder_init (void)
 {
 	volatile uint32_t dummy;
@@ -88,6 +109,9 @@ void encoder_init (void)
 	NVIC_ClearPendingIRQ(PIOA_IRQn);
 }
 
+/**
+ * @brief Resets the encoder count
+ */
 void encoder_reset (void) // quick fix for interrupts fiering unexpectedly at the begining
 {
 	enc_movment = 0;
@@ -104,7 +128,14 @@ void encoder_reset (void) // quick fix for interrupts fiering unexpectedly at th
 		enc_oldstate = ENC_STATE_C;
 	}
 }
-
+/**
+ * @brief Returns the number and direction of encoder rotation
+ *
+ *	Returns the number and direction of rotation since last call of this function.
+ *	Positive numbers mean CW rotation, negative means CCW rotation.
+ *
+ * @return Numer and direction of rotation
+ */
 int32_t encoder_get (void)
 {
 	int32_t temp = enc_movment;
@@ -112,6 +143,11 @@ int32_t encoder_get (void)
 	return temp;
 }
 
+/**
+ * @brief Returns the state of encoder pushbutton
+ *
+ * @return state of encoder pushbutton
+ */
 uint8_t encoder_get_pb (void)
 {
 	return pio_get(ENC_PORT, PIO_TYPE_PIO_INPUT, ENC_SW_PIN);

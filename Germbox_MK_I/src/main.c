@@ -98,11 +98,12 @@
 
 
 volatile uint32_t time_expired = 0, watering_expired = 0; // indicator flags
-volatile uint32_t ttp = 0;		// time to print
+volatile uint32_t ttp = 0;		// time to print indicator flag
 
-volatile uint32_t expired_time = 0;
-volatile uint32_t water_timer = 0;
+volatile uint32_t expired_time = 0;  //global timer variable
+volatile uint32_t water_timer = 0;	//watering timer vaariable
 
+//counts time from the start of program
 void min_count (void)
 {
 	water_timer++;
@@ -114,13 +115,13 @@ void min_count (void)
 		watering_expired = 1;
 	}
 }
-
+// callback function taht is called when watering duration  is over and pump should be turned off
 static void water_off (void)
 {
 	pump_off;
 }
 
-
+//initialization of minute counter used for timing
 static void init_min_counter (void)
 {
 	stimer_set_time(MIN_TIMER, 60000, 1);
@@ -128,12 +129,14 @@ static void init_min_counter (void)
 	stimer_start(MIN_TIMER);
 }
 
+//initialization of watering timer used for watering duration timeing
 static void init_watering_timer (void)
 {
 	stimer_set_time(WATERING_TIMER, DEFAULT_WATERING_TIME * 100, 0);
 	stimer_register_callback(WATERING_TIMER, water_off);
 }
 
+// function starts watering for time given in argumenz (in seconds)
 void water (uint8_t amount)
 {
 	stimer_set_time(WATERING_TIMER, amount * 1000, 0);
@@ -142,7 +145,8 @@ void water (uint8_t amount)
 	
 }
 
-void float_split (float input, uint32_t* wh, uint32_t* dec)
+// Auxilary function to split float to integral and decimal part
+static void float_split (float input, uint32_t* wh, uint32_t* dec)
 {
 	uint32_t temp;
 	temp = (uint32_t)input;
@@ -150,11 +154,12 @@ void float_split (float input, uint32_t* wh, uint32_t* dec)
 	*wh = (uint32_t)temp;
 }
 
+// Callback function witch is called whenever PID loop timer has expired
 void pid_timeout(void)
 {
 	time_expired = 1;
 }
-
+// Callback function witch is called whenever USB printout timer has expired
 void time_to_print(void)
 {
 	ttp = 1;
@@ -163,20 +168,22 @@ void time_to_print(void)
 int main (void)
 {
 
-	float temp, power, set_temp = DEFAULT_SET_T, old_set_temp = 0;
-	uint8_t str_pos = 0, humid;
-	uint8_t chars = 0, old_pb = 1, pb = 0;
-	uint8_t days, hrs, mins;
-	int8_t set_humid = DEFAULT_SET_HUMID;
-	volatile uint8_t selector = 0;  // selector 0 -> seting temperature, selector -> setting humidity
-	uint32_t whole, decimal;
-	int32_t pulses;
-	uint8_t str[20];
-	pidstruct_t tPid;
+	float temp, power, set_temp = DEFAULT_SET_T, old_set_temp = 0;	// Heatiing related variables
+	uint8_t str_pos = 0;											// USB text printing variaable
+	uint8_t humid;													// Current humidity
+	uint8_t old_pb = 1, pb = 0;										// Push button related variables
+	uint8_t chars = 0;												// Printing related variables
+	uint8_t days, hrs, mins;										// Time printout variables
+	int8_t set_humid = DEFAULT_SET_HUMID;							// Set humidity
+	volatile uint8_t selector = 0;									// selector 0 -> seting temperature, selector -> setting humidity
+	uint32_t whole, decimal;										// variables used for printing floats
+	int32_t pulses;													// variable used for encoder handling
+	uint8_t str[20];												// buffer for text printing
+	pidstruct_t tPid;												// Temperature controller PID structure
 	
 	sysclk_init();
 	board_init();
-	init_min_counter(); // start minute timer
+	init_min_counter(); // start all timers
 	init_watering_timer();
 	
 	#ifdef PRINT_OVER_USB	
@@ -196,16 +203,19 @@ int main (void)
 	stimer_register_callback(PID_TIMER, pid_timeout);
 	stimer_start(PID_TIMER);
 	
+	//init timer for printout over USB
 	stimer_set_time(PRINT_TIMER, 1000, 1);
 	stimer_register_callback(PRINT_TIMER, time_to_print);
 	stimer_start(PRINT_TIMER);
 
 	display_clear();
+	
+	//initial watering to purge all air from hose
 	water(10);
 	
 	while(1)
 	{
-		//get temperature
+		//get temperature and humidity
 		temp = thermo_get_temp();
 		humid = thermo_get_moisture();
 		if(time_expired) // time to execut pid controll loop
@@ -244,15 +254,6 @@ int main (void)
 			float_split(temp, &whole, &decimal);
 			str_pos += sprintf(str + (str_pos), ", %2u.%1u;", whole, decimal );
 			udi_cdc_write_buf(str, str_pos);
-			
-			/*
-			float_split(set_temp, &whole, &decimal);
-			str_pos = sprintf(str, "$%2u.%1u", whole, decimal);
-			float_split(temp, &whole, &decimal);
-			str_pos += sprintf(str + (str_pos), ", %2u.%1u", whole, decimal );
-			str_pos += sprintf(str + (str_pos), ", %d;", (uint32_t)tPid.sum );
-			udi_cdc_write_buf(str, str_pos);
-			*/
 			ttp = 0;
 		}
 		#endif

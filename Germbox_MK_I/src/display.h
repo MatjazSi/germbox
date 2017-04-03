@@ -12,9 +12,9 @@
 #include <stdint.h>
 
 
-void display_init (void);
-void display_clear (void);
-void display_write_string (uint8_t row, uint8_t column, uint8_t *string);
+void display_init (void); /* Initializes I2c and display */
+void display_clear (void); /*Clears display */
+void display_write_string (uint8_t row, uint8_t column, uint8_t *string); /*Writes string on dispay to location showd by row and column */
 
 #define DISPLAY_ADR		0x3C
 

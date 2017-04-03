@@ -10,11 +10,11 @@
 #define PUMP_H_
 #include "hardware_conf.h"
 
-void pump_init(void);
+void pump_init(void);												/* Initializaton of water pump */
 
-#define  pump_on	pio_set_pin_group_high(PUMP_PORT, PUMP_PIN);
+#define  pump_on	pio_set_pin_group_high(PUMP_PORT, PUMP_PIN);	/* Turn the pump on */
 
-#define  pump_off	pio_set_pin_group_low(PUMP_PORT, PUMP_PIN);
+#define  pump_off	pio_set_pin_group_low(PUMP_PORT, PUMP_PIN);		/* Turn the pump off */
 
 
 

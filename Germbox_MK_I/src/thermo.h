@@ -21,8 +21,8 @@
 #define MOISTURE_OFFSET					-3330	//moisture offset
 #define MOISTURE_DIV_FACTOR				24		//division factor
 
-void thermo_init(void);
-float thermo_get_temp (void);
-uint16_t thermo_get_moisture (void);
+void thermo_init(void);					/* Initialisation of measuring system */
+float thermo_get_temp (void);			/* Returns temperature in deg C */
+uint16_t thermo_get_moisture (void);	/* Returns moisture */
 
 #endif /* THERMO_H_ */

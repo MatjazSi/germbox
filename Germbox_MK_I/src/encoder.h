@@ -13,8 +13,8 @@
 #define ENC_STATE_B		1
 #define ENC_STATE_C		2
 
-void encoder_init (void);
-void encoder_reset (void);
-int32_t encoder_get (void);
-uint8_t encoder_get_pb (void);
+void encoder_init (void); /* Initializes encoder */
+void encoder_reset (void); /* Resets encoder count */
+int32_t encoder_get (void); /* Returns number and direction of turn of encoder */
+uint8_t encoder_get_pb (void); /* Returns the state of pusshbuton of encoder */
 #endif /* ENCODER_H_ */

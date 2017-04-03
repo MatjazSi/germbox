@@ -1,9 +1,12 @@
-/*
- * thermo.c
+/**
+ * @file thermo.c
+ * @author Siworks
+ * @date 3 Apr 2017
+ * @brief Measurment of temperature and moisture
  *
- * Created: 20. 03. 2017 00:51:53
- *  Author: matja
+ * 
  */
+
 #include <math.h>
  
 #include "pio.h"
@@ -13,6 +16,12 @@
 #include "thermo.h"
 #include "hardware_conf.h"
 
+
+/**
+ * @brief Initiliazation of measurment system
+ *
+ *	This functioon should be caled before using measurment system
+ */
 void thermo_init(void)
 {
 	pmc_enable_periph_clk(ID_PIOB);
@@ -30,6 +39,11 @@ void thermo_init(void)
 	
 }
 
+/**
+ * @brief Returns temperature
+ *
+ * @return Tempeerature in deg C
+ */
 float thermo_get_temp (void)
 {
 	uint32_t adc;
@@ -49,6 +63,11 @@ float thermo_get_temp (void)
 	return (((adc * REF_V) / (4096 * GROUND_SENSOR_ADC_GAIN)) * GROUND_SENSOR_GAIN);
 }
 
+/**
+ * @brief Returns moisture of ground
+ *
+ * @return Moisture of ground on scale from 0 to 10, 10 being maximum
+ */
 uint16_t thermo_get_moisture (void)
 {
 	int32_t adc;

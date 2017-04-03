@@ -1,9 +1,13 @@
-/*
- * heater.c
+/**
+ * @file heater.c
+ * @author Siworks
+ * @date 3 Apr 2017
+ * @brief Support for heater
  *
- * Created: 15. 03. 2017 02:12:48
- *  Author: matja
- */ 
+ * Function uses hardware PWM controller for heater driving
+ * 
+ * 
+ */
 
 
 #include "pwm.h"
@@ -16,6 +20,11 @@
 
 pwm_channel_t pwm_ch_instance;
 
+/**
+ * @brief Initiliazation of heater
+ *
+ *	This functioon should be caled before usng encoder
+ */
 void heater_init(void)
 {
 	
@@ -42,6 +51,11 @@ void heater_init(void)
 	
 }
 
+/**
+ * @brief Set the heating power of heater
+ *
+ * @param heat Heating poer in percent (range 0 to 100)
+ */
 volatile void heater_set (uint8_t heat)
 {
 	if(heat > 100)
