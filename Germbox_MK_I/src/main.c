@@ -32,7 +32,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "asf.h""
+#include "asf.h"
 
 #include "pid.h"
 #include "stimer.h"
@@ -66,35 +66,6 @@
 
 
 //#define PRINT_OVER_USB //uncoment if you want controller to prnt data out over USB
-
-/* best so far (PI)
-#define KP	90
-#define KI	0.01
-#define KD	0
-*/
-
-/* old settings (PID)
-
-#define KP	150
-#define KI	0.2
-#define KD	6
-*/
-
-
-/* Underdamped (PID)
-
-#define KP	25
-#define KI	0.01
-#define KD	250
-*/
-
-/* kind of ok (PID)
-
-#define KP	25
-#define KI	0.05
-#define KD	250
-*/
-
 
 
 volatile uint32_t time_expired = 0, watering_expired = 0; // indicator flags
@@ -168,7 +139,7 @@ void time_to_print(void)
 int main (void)
 {
 
-	float temp, power, set_temp = DEFAULT_SET_T, old_set_temp = 0;	// Heatiing related variables
+	float temp, power, set_temp = DEFAULT_SET_T;					// Heatiing related variables
 	uint8_t str_pos = 0;											// USB text printing variaable
 	uint8_t humid;													// Current humidity
 	uint8_t old_pb = 1, pb = 0;										// Push button related variables

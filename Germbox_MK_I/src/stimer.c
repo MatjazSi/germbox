@@ -18,7 +18,6 @@ stimer_ch_t stimer_times[STIMER_NBR];
 void stimer_init (void)
 {
 	pmc_enable_periph_clk(ID_TC0);
-	uint32_t ul_div;
 
 	// Configure TC for a 1000Hz frequency and trigger on RC compare. 
 	//tc_find_mck_divisor(1000, ul_sysclk, &ul_div, &ul_tcclks, ul_sysclk);
@@ -110,6 +109,7 @@ uint32_t stimer_start(uint8_t timer)
 		}
 		stimer_times[timer].running = 1;
 	}
+	return 1;
 }
 
 uint32_t stimer_stop (uint8_t timer)

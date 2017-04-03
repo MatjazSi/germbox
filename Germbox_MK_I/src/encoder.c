@@ -77,7 +77,6 @@ static void pin_c_handler(void)
  */
 void encoder_init (void)
 {
-	volatile uint32_t dummy;
 	pmc_enable_periph_clk(ID_PIOA);
 	pio_set_input(ENC_PORT, ENC_A_PIN, PIO_PULLUP );
 	pio_set_input(ENC_PORT, ENC_B_PIN, PIO_PULLUP );

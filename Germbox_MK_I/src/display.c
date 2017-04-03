@@ -39,22 +39,6 @@ static void display_write_reg (uint8_t reg_addr, uint8_t value)
 }
 
 /**
- * @brief Writes buffer of data to display 
- *
- * @param start_addr Register start addres
- * @param *buff pointer to buffer to be written to
- * @param len lenght of buffer
- */
-static void display_write_buffer(uint8_t start_addr, uint8_t* buff, uint32_t len)
-{
-	twiPacket.addr[0] = start_addr;
-	twiPacket.addr_length = 1;
-	twiPacket.buffer = buff;
-	twiPacket.chip = DISPLAY_ADR;
-	twiPacket.length = len;
-	twi_master_write(TWI0, &twiPacket);
-}
-/**
  * @brief Writes comand to display
  *
  * @param com Comand number

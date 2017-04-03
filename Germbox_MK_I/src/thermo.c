@@ -48,7 +48,6 @@ float thermo_get_temp (void)
 {
 	uint32_t adc;
 	uint8_t n;
-	float whole, decimal, temp;
 	adc_enable_channel(ADC, GROUND_TEMP_ADC_CH);
 	adc = 0;
 	for(n = 0; n < THERMO_AVERAGING; n++)
