@@ -14,6 +14,7 @@
 
 #include "display.h"
 #include "font.h"
+#include "ugui/ugui.h"
 
 #include "pio.h"
 #include "twi.h"
@@ -21,6 +22,10 @@
 #include <stdint.h>
 
 twi_packet_t twiPacket;
+UG_GUI Gui;
+uint8_t display_buffer[128 * 64 / 8]; // 128 * 8 display resolution 
+
+
 
 /**
  * @brief Writes data do dispaly registers
@@ -137,6 +142,26 @@ static void display_putch (uint8_t ch)
 	
 }
 
+void pset(UG_U16 x, UG_U16 y, UG_COLOR c)
+{
+	unsigned int i,p;
+
+	if ( x > 127 ) return;
+	p = y>>3; // :8
+	p = p<<7; // *128
+	p +=x;
+
+	if( c )
+	{
+		display_buffer[p] |= 1 << (y % 8);
+	}
+	else
+	{
+		display_buffer[p] &= ~(1 << (y % 8));
+	}
+
+}
+
 /**
  * @brief Clear the dispaly
  *
@@ -212,6 +237,8 @@ void display_init (void)
 	display_comand(SSD1306_DISPLAYON);
 		
 	display_clear();
+	UG_Init(&Gui, pset, 128, 64);
+	
 
 }
 
@@ -231,6 +258,18 @@ void display_write_string (uint8_t row, uint8_t column, uint8_t *string)
 	while(*string)
 	{
 		display_putch(*string++);
+	}
+}
+
+
+void display_update (void)
+{
+	uint32_t n;
+	display_select_column(0);
+	display_select_row(0);
+	for(n = 0; n < (128 * 64 / 8); n++)
+	{
+		display_data(display_buffer[n]);
 	}
 }
 

@@ -42,6 +42,8 @@
 #include "pump.h"
 #include "encoder.h"
 
+#include "ugui/ugui.h"
+
 
 #define PID_TIMER		0 // stimer channel number
 #define PRINT_TIMER		1 // timer for printing things over usb
@@ -180,6 +182,14 @@ int main (void)
 	stimer_start(PRINT_TIMER);
 
 	display_clear();
+	
+	/*****Display test - Delete next section for real use *********/
+	
+	UG_FillRoundFrame(20, 20, 80, 60, 5, 1);
+	display_update();
+	while(1);
+	/*****Display test - Delete upper section for real use *********/
+	
 	
 	//initial watering to purge all air from hose
 	water(10);

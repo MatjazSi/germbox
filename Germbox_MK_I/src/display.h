@@ -10,11 +10,14 @@
 #define DISPLAY_H_
 
 #include <stdint.h>
+#include "ugui/ugui.h"
 
 
 void display_init (void); /* Initializes I2c and display */
 void display_clear (void); /*Clears display */
 void display_write_string (uint8_t row, uint8_t column, uint8_t *string); /*Writes string on dispay to location showd by row and column */
+void pset(UG_U16 x, UG_U16 y, UG_COLOR c);
+void display_update (void);
 
 #define DISPLAY_ADR		0x3C
 
