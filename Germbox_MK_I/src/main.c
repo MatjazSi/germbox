@@ -45,8 +45,9 @@
 
 
 
-#include "ugui/ugui.h"
 
+#include "ugui/ugui.h"
+#include "icones.h"
 
 #define PID_TIMER		0 // stimer channel number
 #define PRINT_TIMER		1 // timer for printing things over usb
@@ -189,10 +190,32 @@ int main (void)
 	/*****Display test - Delete next section for real use *********/
 	
 	int32_t enc = 0, data = 0;
+	/*
+	UG_WINDOW win;
+	UG_OBJECT obj[1];
+	UG_IMAGE img;
+	UG_BMP pizda = {
+		(void *) logo,
+		50,
+		60,
+		BMP_BPP_1 ,
+		BMP_RGB555
+	};
 	UG_FontSelect( &FONT_10X16 );
-	UG_DrawFrame(5, 5, 55, 15, 1);
+	//UG_DrawFrame(5, 5, 55, 15, 1);
+	
+	UG_WindowCreate(&win, obj, 1, NULL);
+	UG_ImageCreate(&win, &img, 6, 0, 0, 50, 60);
+	UG_ImageSetBMP(&win, 6, &pizda);
+	UG_WindowShow(&win);
+	UG_Update();
+	*/
+	display_draw_image(48, 60, logo);
+	display_update();
+	/*
 	while(1)
 	{
+		
 		enc = encoder_get();
 		data += enc * 2;
 		if(data < 0) 
@@ -208,7 +231,7 @@ int main (void)
 		UG_PutString(60, 7, "Dat");
 		display_update();
 	}
-	
+	*/
 	while(1);
 	/*****Display test - Delete upper section for real use *********/
 	

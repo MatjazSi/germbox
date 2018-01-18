@@ -273,6 +273,28 @@ void display_update (void)
 	}
 }
 
+void display_draw_image (uint32_t x_size, uint32_t y_size, uint8_t *img)
+{
+	uint32_t x, y, n, byte;
+	for(y = 0; y < y_size; y++)
+	{
+		for(x = 0; x < x_size; x++)
+		{
+			byte = ((y * (x_size )) + x) / 8;
+			n = x % 8;
+			if((*(img + byte)) & (1 <<  7 - n))
+			{
+				pset(x, y, 1);
+			}
+			else
+			{
+				pset(x, y, 0);
+			}
+		}
+	}
+	
+}
+
 
 
 

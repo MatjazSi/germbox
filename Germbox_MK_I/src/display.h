@@ -18,6 +18,7 @@ void display_clear (void); /*Clears display */
 void display_write_string (uint8_t row, uint8_t column, uint8_t *string); /*Writes string on dispay to location showd by row and column */
 void pset(UG_U16 x, UG_U16 y, UG_COLOR c);
 void display_update (void);
+void display_draw_image (uint32_t x_size, uint32_t y_size, uint8_t *img);
 
 #define DISPLAY_ADR		0x3C
 
