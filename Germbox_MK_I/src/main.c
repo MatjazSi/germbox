@@ -28,6 +28,7 @@
 /*
  * Support and FAQ: visit <a href="http://www.atmel.com/design-support/">Atmel Support</a>
  */
+
 #include <asf.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -41,6 +42,8 @@
 #include "thermo.h"
 #include "pump.h"
 #include "encoder.h"
+
+
 
 #include "ugui/ugui.h"
 
@@ -185,8 +188,27 @@ int main (void)
 	
 	/*****Display test - Delete next section for real use *********/
 	
-	UG_FillRoundFrame(20, 20, 80, 60, 5, 1);
-	display_update();
+	int32_t enc = 0, data = 0;
+	UG_FontSelect( &FONT_10X16 );
+	UG_DrawFrame(5, 5, 55, 15, 1);
+	while(1)
+	{
+		enc = encoder_get();
+		data += enc * 2;
+		if(data < 0) 
+		{
+			data = 0;	
+		}
+		else if(data > 54 - 6) 
+		{
+			data = 54 - 6;
+		}
+		UG_FillFrame(6, 6, 54, 14, 0); // clear the bar
+		UG_FillFrame(6, 6, data + 6, 14, 1); // draw bar
+		UG_PutString(60, 7, "Dat");
+		display_update();
+	}
+	
 	while(1);
 	/*****Display test - Delete upper section for real use *********/
 	

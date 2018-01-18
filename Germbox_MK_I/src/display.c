@@ -81,7 +81,7 @@ static void twi_init (void)
 	twiOptions.chip = DISPLAY_ADR;
 	twiOptions.master_clk = 32000000;
 	twiOptions.smbus = 0;
-	twiOptions.speed = 100000;
+	twiOptions.speed = 400000;
 	
 	twi_enable_master_mode(TWI0);
 	twi_master_init(TWI0, &twiOptions);
