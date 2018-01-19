@@ -588,6 +588,12 @@
     <Folder Include="src\ugui\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\graphic.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\graphic.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\icones.h">
       <SubType>compile</SubType>
     </Compile>

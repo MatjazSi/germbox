@@ -48,6 +48,7 @@
 
 #include "ugui/ugui.h"
 #include "icones.h"
+#include "graphic.h"
 
 #define PID_TIMER		0 // stimer channel number
 #define PRINT_TIMER		1 // timer for printing things over usb
@@ -79,6 +80,8 @@ volatile uint32_t ttp = 0;		// time to print indicator flag
 
 volatile uint32_t expired_time = 0;  //global timer variable
 volatile uint32_t water_timer = 0;	//watering timer vaariable
+
+GRprogressbar_t bar1;
 
 //counts time from the start of program
 void min_count (void)
@@ -190,27 +193,9 @@ int main (void)
 	/*****Display test - Delete next section for real use *********/
 	
 	int32_t enc = 0, data = 0;
-	/*
-	UG_WINDOW win;
-	UG_OBJECT obj[1];
-	UG_IMAGE img;
-	UG_BMP pizda = {
-		(void *) logo,
-		50,
-		60,
-		BMP_BPP_1 ,
-		BMP_RGB555
-	};
-	UG_FontSelect( &FONT_10X16 );
-	//UG_DrawFrame(5, 5, 55, 15, 1);
-	
-	UG_WindowCreate(&win, obj, 1, NULL);
-	UG_ImageCreate(&win, &img, 6, 0, 0, 50, 60);
-	UG_ImageSetBMP(&win, 6, &pizda);
-	UG_WindowShow(&win);
-	UG_Update();
-	*/
-	display_draw_image(48, 60, logo);
+	GR_ProgressBar_create(&bar1, 2, 2, 15, 100, 20, 30);
+	GR_ProgressBar_init(&bar1);
+	GR_ProgressBar_update(&bar1, 28);
 	display_update();
 	/*
 	while(1)
