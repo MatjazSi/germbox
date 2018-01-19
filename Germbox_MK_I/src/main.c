@@ -193,30 +193,28 @@ int main (void)
 	/*****Display test - Delete next section for real use *********/
 	
 	int32_t enc = 0, data = 0;
-	GR_ProgressBar_create(&bar1, 2, 2, 15, 100, 20, 30);
+	GR_ProgressBar_create(&bar1, 10, 30, 12, 70, 1, 10);
 	GR_ProgressBar_init(&bar1);
-	GR_ProgressBar_update(&bar1, 28);
 	display_update();
-	/*
+	data = 1;
 	while(1)
 	{
 		
 		enc = encoder_get();
-		data += enc * 2;
-		if(data < 0) 
+		data += enc;
+		if(data < 1)
+		data = 1;
+		if(data > 10)
+		data = 10;
+		
+		if(enc)
 		{
-			data = 0;	
+			GR_ProgressBar_update(&bar1, data);
 		}
-		else if(data > 54 - 6) 
-		{
-			data = 54 - 6;
-		}
-		UG_FillFrame(6, 6, 54, 14, 0); // clear the bar
-		UG_FillFrame(6, 6, data + 6, 14, 1); // draw bar
-		UG_PutString(60, 7, "Dat");
+		
+		
 		display_update();
 	}
-	*/
 	while(1);
 	/*****Display test - Delete upper section for real use *********/
 	

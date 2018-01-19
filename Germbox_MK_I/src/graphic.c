@@ -46,7 +46,7 @@ void GR_ProgressBar_update (GRprogressbar_t *bar, int32_t new_val)
 		pixels++;
 	}
 	
-	UG_FillFrame(bar->x_pos + 1, bar->y_pos + 1, bar->lenght - 1, (bar->y_pos + 1) + (bar->width - 2), 0); // delete old bar
+	UG_FillFrame(bar->x_pos + 1, bar->y_pos + 1, bar->x_pos + (bar->lenght - 1), (bar->y_pos + 1) + (bar->width - 2), 0); // delete old bar
 	UG_FillFrame(bar->x_pos + 1, bar->y_pos + 1, bar->x_pos + pixels + 1, (bar->y_pos + 1) + (bar->width - 2), 1); // draw new bar
 }
  
