@@ -26,7 +26,7 @@ typedef struct
 	int32_t minval;			//minimum value of bar
 	int32_t maxval;			//maximum value of bar
 	int32_t val;
-	uint32_t coef;			//coeficient of pixels per unit multiplien by 10
+	uint32_t coef;			//coeficient of pixels per unit multiplien by 100
 	carrot_type_t carrot_type;
 	uint32_t carrot_size;
 }GRprogressbar_t;

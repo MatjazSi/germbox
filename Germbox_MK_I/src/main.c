@@ -53,7 +53,8 @@
 #define PID_TIMER		0 // stimer channel number
 #define PRINT_TIMER		1 // timer for printing things over usb
 #define MIN_TIMER		2 // timer used for minute counting
-#define WATERING_TIMER	3 // timer used for measuring 
+#define WATERING_TIMER	3 // timer used for measuring
+#define DISPLAY_TIMER	4 // timer used for displaying of different things 
 
 
 #define KP	35//55
@@ -71,6 +72,8 @@
 #define LONG_WATERING			25 //watering duration in seconds
 #define HUMID_TRESHOLD			4 // treshild between short and long wattering duration
 
+#define SET_POINT_DISPALY_TIME	1500 // time of dispaly overriding in ms
+
 
 //#define PRINT_OVER_USB //uncoment if you want controller to prnt data out over USB
 
@@ -80,6 +83,8 @@ volatile uint32_t ttp = 0;		// time to print indicator flag
 
 volatile uint32_t expired_time = 0;  //global timer variable
 volatile uint32_t water_timer = 0;	//watering timer vaariable
+
+volatile uint32_t display_show_set = 0;
 
 GRprogressbar_t bar1;
 
@@ -145,6 +150,14 @@ void time_to_print(void)
 	ttp = 1;
 }
 
+// Callback function to change deispalying of set values
+void display_set_point (void)
+{
+	stimer_stop(DISPLAY_TIMER);
+	stimer_set_time(DISPLAY_TIMER, SET_POINT_DISPALY_TIME, 0);
+	display_show_set = 0;
+}
+
 int main (void)
 {
 
@@ -160,6 +173,8 @@ int main (void)
 	int32_t pulses;													// variable used for encoder handling
 	uint8_t str[20];												// buffer for text printing
 	pidstruct_t tPid;												// Temperature controller PID structure
+	GRprogressbar_t PB_temp, PB_humid, PB_pow;
+	
 	
 	sysclk_init();
 	board_init();
@@ -187,58 +202,33 @@ int main (void)
 	stimer_set_time(PRINT_TIMER, 1000, 1);
 	stimer_register_callback(PRINT_TIMER, time_to_print);
 	stimer_start(PRINT_TIMER);
+	
+	//init objects on display
+	UG_FontSelect(&FONT_6X8);
+	GR_ProgressBar_create(&PB_temp, 15, 5, 8, 70, 100, 400);
+	GR_ProgressBar_create(&PB_humid, 15, 20, 8, 70, 0, 10);
+	GR_ProgressBar_create(&PB_pow, 15, 32, 4, 70, 0, 100);
+	GR_Carrot_create(&PB_temp, CARRIOT_SINGLE, 3);
+	GR_Carrot_create(&PB_humid, CARRIOT_SINGLE, 3);
+	GR_ProgressBar_init(&PB_temp);
+	GR_ProgressBar_init(&PB_humid);
+	GR_ProgressBar_init(&PB_pow);
+	UG_PutString(0, 5, "T:");
+	UG_PutString(0, 20, "H:");
+	UG_PutString(0, 32, "P:");
+	
+	stimer_set_time(DISPLAY_TIMER, SET_POINT_DISPALY_TIME, 0);
+	stimer_register_callback(DISPLAY_TIMER, display_set_point);
 
 	display_clear();
-	
-	/*****Display test - Delete next section for real use *********/
-	
-	int32_t enc = 0, data = 0, cal = 0;
-	GR_ProgressBar_create(&bar1, 10, 10, 8, 100, 1, 10);
-	GR_Carrot_create(&bar1, CARROT_DOUBLE, 5);
-	GR_ProgressBar_init(&bar1);
-	GR_ProgressBar_update(&bar1, 5);
 	display_update();
-	data = 1;
-	while(1)
-	{
-		
-		enc = encoder_get();
-		if(encoder_get_pb())
-		{
-			data += enc;
-		}
-		else
-		{
-			cal += enc;
-		}
-		
-		if(data < 1)
-		data = 1;
-		if(data > 10)
-		data = 10;
-		
-		if(cal < 1)
-		cal= 1;
-		if(cal > 10)
-		cal = 10;
-		
-		if(enc)
-		{
-			GR_Carrot_update(&bar1, data);
-			GR_ProgressBar_update(&bar1, cal);
-		}
-		
-		
-		display_update();
-	}
-	/*****Display test - Delete upper section for real use *********/
-	
-	
+
 	//initial watering to purge all air from hose
 	water(10);
 	
 	while(1)
 	{
+		//start of control loop **************************************************************
 		//get temperature and humidity
 		temp = thermo_get_temp();
 		humid = thermo_get_moisture();
@@ -267,6 +257,7 @@ int main (void)
 			}
 			watering_expired = 0;	
 		}
+		//end of control loop **********************************************************
 		
 		#ifdef PRINT_OVER_USB
 		if(ttp) // time to print out things over USB
@@ -282,35 +273,73 @@ int main (void)
 		}
 		#endif
 		//dispaly handling
+		
+		if(!display_show_set) // clear background of satpoint print location
+		{
+			UG_FillFrame(10, 40, 118, 60, 0);
+		}
+		
 		days = expired_time / (24*60);
 		hrs = (expired_time - (60 * 24 * days)) / 60;
 		mins = (expired_time - (60 * 24 * days)) % 60;
 		
 		float_split(set_temp, &whole, &decimal);
-		chars = sprintf(str, "SET T:%2u.%1u C ", whole, decimal);
+		GR_Carrot_update(&PB_temp, whole * 10 + decimal);
+		//if you decide to put in visual indication of value being changed, you do it here*************************************
 		if(selector)
 		{
-			sprintf(str + chars, " ");
+		//	sprintf(str + chars, " ");
 		}
 		else
 		{
-			sprintf(str + chars, "<");
+			//sprintf(str + chars, "<");
 		}
-		display_write_string(0, 0, str);
+		//end of visual indication ************************************
+		GR_Carrot_update(&PB_humid, set_humid);
+		GR_ProgressBar_update(&PB_humid, humid);
+		sprintf(str, "  %2u", humid);
+		UG_PutString(90, 20, str);
 		
-		chars = sprintf(str, "SET H:  %2u", set_humid);
-		if(selector)
-		{
-			sprintf(str + chars, "   <");
-		}
-		else
-		{
-			sprintf(str + chars, "    ");
-		}
-		display_write_string(1, 0, str);
+		//display_write_string(1, 0, str);
 		
 		float_split(temp, &whole, &decimal);
-		sprintf(str, "TMP:%2u.%1u C, H:%2u", whole, decimal, humid);
+		sprintf(str, "%2u.%1uC", whole, decimal);
+		UG_PutString(90, 5, str);
+		GR_ProgressBar_update(&PB_temp, whole * 10 + decimal);
+		
+		GR_ProgressBar_update(&PB_pow, power);
+		
+		sprintf(str, "DUR:%2ud:%02uh:%02um", days, hrs, mins);
+		UG_PutString(10, 42, str);
+		
+		sprintf(str, "NEXT:%2uh:%02um", (WATTERING_INTERVAL - water_timer) / 60,  (WATTERING_INTERVAL - water_timer) % 60);
+		UG_PutString(10, 52, str);
+		
+		if(display_show_set)
+		{
+			
+			UG_FillFrame(10, 40, 118, 60, 1);
+			UG_FillFrame(12, 42, 116, 58, 0);
+			if(!selector)
+			{
+				UG_FontSelect(&FONT_7X12);
+				float_split(set_temp, &whole, &decimal);
+				sprintf(str, "SET T:%2u.%1uC", whole, decimal);
+				UG_PutString(20, 46, str);
+				UG_FontSelect(&FONT_6X8);
+			}
+			else
+			{
+				UG_FontSelect(&FONT_7X12);
+				sprintf(str, "SET H:%2u", set_humid);
+				UG_PutString(20, 46, str);
+				UG_FontSelect(&FONT_6X8);
+			}
+		}
+		
+		
+		
+		/*
 		display_write_string(2, 0, str);
 		
 		sprintf(str, "PWR:%3u ", (uint32_t)power);
@@ -321,33 +350,41 @@ int main (void)
 		
 		sprintf(str, "NEXT:%2uh:%02um", (WATTERING_INTERVAL - water_timer) / 60,  (WATTERING_INTERVAL - water_timer) % 60);
 		display_write_string(5, 0, str);
-		
+		*/
+		display_update();
 		//encoder handling
 		pulses = encoder_get();
-		if(selector)
+		if(pulses)
 		{
-			set_humid += pulses;
-			if(set_humid > 10)
+			display_show_set = 1;
+			stimer_set_time(DISPLAY_TIMER, SET_POINT_DISPALY_TIME, 0);
+			stimer_start(DISPLAY_TIMER);
+			if(selector)
 			{
-				set_humid = 10;
+				set_humid += pulses;
+				if(set_humid > 10)
+				{
+					set_humid = 10;
+				}
+				else if (set_humid < 0)
+				{
+					set_humid = 0;
+				}
 			}
-			else if (set_humid < 0)
+			else
 			{
-				set_humid = 0;
+				set_temp += (pulses * 0.5);
+				if(set_temp > 40.0)
+				{
+					set_temp = 40.0;
+				}
+				else if (set_temp < 10.0)
+				{
+					set_temp = 10.0;
+				}
 			}
 		}
-		else
-		{
-			set_temp += (pulses * 0.5);
-			if(set_temp > 40.0)
-			{
-				set_temp = 40.0;
-			}
-			else if (set_temp < 10.0)
-			{
-				set_temp = 10.0;
-			}
-		}
+		
 		
 		if(pulses && (!selector))
 		{
@@ -357,6 +394,9 @@ int main (void)
 		pb = encoder_get_pb();
 		if(pb != old_pb)
 		{
+			display_show_set = 1;
+			stimer_set_time(DISPLAY_TIMER, SET_POINT_DISPALY_TIME, 0);
+			stimer_start(DISPLAY_TIMER);
 			old_pb = pb;
 			if(!pb)
 			{

@@ -46,7 +46,7 @@ void GR_ProgressBar_create (GRprogressbar_t* bar, uint32_t x_pos, uint32_t y_pos
 	bar->minval = minval;
 	bar->maxval = maxval;
 	bar->val = minval;
-	bar->coef = (lenght * 10) / (maxval - minval); // coefficient of pixels per unit multiplied by 10
+	bar->coef = (lenght * 100) / (maxval - minval); // coefficient of pixels per unit multiplied by 10
 	bar->carrot_size = 0;
 	bar->carrot_type = CAROT_NONE;
 }
@@ -74,8 +74,8 @@ void GR_Carrot_update (GRprogressbar_t *bar, uint32_t pos)
 		pos = bar->maxval;
 	}
 	mul = (pos - bar->minval) * bar->coef;
-	pixels = mul / 10;
-	if((mul % 10) > 5)
+	pixels = mul / 100;
+	if((mul % 100) > 50)
 	{
 		pixels++;
 	}
@@ -119,8 +119,8 @@ void GR_ProgressBar_update (GRprogressbar_t *bar, int32_t new_val)
 		new_val = bar->maxval;
 	}
 	mul = (new_val - bar->minval) * bar->coef;
-	pixels = mul / 10;
-	if((mul % 10) > 5)
+	pixels = mul / 100;
+	if((mul % 100) > 50)
 	{
 		pixels++;
 	}

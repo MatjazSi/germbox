@@ -42,7 +42,7 @@ void TC0_Handler(void)
 	
 	// Clear status bit to acknowledge interrupt
 	ul_dummy = tc_get_status(TC0, 0);
-	for(n = 0; n < (STIMER_NBR - 1); n++)
+	for(n = 0; n < STIMER_NBR; n++)
 	{
 		if(stimer_times[n].running)
 		{
