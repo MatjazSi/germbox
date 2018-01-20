@@ -13,8 +13,7 @@ typedef enum
 {
 	CAROT_NONE,
 	CARRIOT_SINGLE,
-	CARROT_DOUBLE,
-	CARROT_LINE
+	CARROT_DOUBLE
 }carrot_type_t;
 
 typedef struct 

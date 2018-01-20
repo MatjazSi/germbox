@@ -7,18 +7,34 @@
 #include "ugui/ugui.h"
 #include "graphic.h"
 
-static void draw_triangle (uint32_t x, uint32_t y, uint32_t siz, uint32_t color)
+static void draw_triangle (uint32_t x, uint32_t y, uint32_t siz, uint32_t inv, uint32_t color)
 {
 	uint32_t n;
-	UG_DrawLine(x, y, x, y - siz, color);	
-	for(n = 1; n < siz; n++ )
+	if(inv)
 	{
-		UG_DrawLine(x - n, y - n, x - n, y - siz, color);
+		UG_DrawLine(x, y, x, y + siz, color);
+		for(n = 1; n < siz; n++ )
+		{
+			UG_DrawLine(x - n, y + n, x - n, y + siz, color);
+		}
+		for(n = 1; n < siz; n++ )
+		{
+			UG_DrawLine(x + n , y + n, x + n, y + siz, color);
+		}
 	}
-	for(n = 1; n < siz; n++ )
+	else
 	{
-		UG_DrawLine(x + n , y - n, x + n, y - siz, color);
+		UG_DrawLine(x, y, x, y - siz, color);
+		for(n = 1; n < siz; n++ )
+		{
+			UG_DrawLine(x - n, y - n, x - n, y - siz, color);
+		}
+		for(n = 1; n < siz; n++ )
+		{
+			UG_DrawLine(x + n , y - n, x + n, y - siz, color);
+		}	
 	}
+	
 }
 
 void GR_ProgressBar_create (GRprogressbar_t* bar, uint32_t x_pos, uint32_t y_pos, uint32_t width, uint32_t lenght, int32_t minval, int32_t maxval)
@@ -63,20 +79,29 @@ void GR_Carrot_update (GRprogressbar_t *bar, uint32_t pos)
 	{
 		pixels++;
 	}
-	draw_triangle(bar->carrot_position, bar->y_pos - 1, bar->carrot_size, 0); //delete old one
-	draw_triangle(bar->x_pos + pixels, bar->y_pos - 1, bar->carrot_size, 1); //draw new one	
+	if(bar->carrot_type == CARRIOT_SINGLE)
+	{
+		draw_triangle(bar->carrot_position, bar->y_pos - 1, bar->carrot_size, 0,  0); //delete old one
+		draw_triangle(bar->x_pos + pixels, bar->y_pos - 1, bar->carrot_size, 0, 1); //draw new one
+	}
+	else if(bar->carrot_type == CARROT_DOUBLE)
+	{
+		draw_triangle(bar->carrot_position, bar->y_pos - 1, bar->carrot_size, 0,  0); //delete old one upper
+		draw_triangle(bar->carrot_position, bar->y_pos + bar->width + 1, bar->carrot_size, 1,  0); //delete old one lower
+		draw_triangle(bar->x_pos + pixels, bar->y_pos - 1, bar->carrot_size, 0, 1); //draw new one upper
+		draw_triangle(bar->x_pos + pixels, bar->y_pos + bar->width + 1, bar->carrot_size, 1, 1); //draw new one lower
+	}
 	bar->carrot_position = bar->x_pos + pixels;
 }
 
 void GR_ProgressBar_init (GRprogressbar_t *bar)
 {
 	UG_DrawFrame(bar->x_pos, bar->y_pos, bar->x_pos + bar->lenght, bar->y_pos + bar->width, 1);
-	
-	if(bar->carrot_type == CARRIOT_SINGLE)
+	if(bar->carrot_type != CAROT_NONE)
 	{
 		GR_Carrot_update(bar, bar->minval);
-		//draw_triangle(bar->carrot_position, bar->y_pos - 1, bar->carrot_size, 1);	
 	}
+	
 }
 //low2 + (value - low1) * (high2 - low2) / (high1 - low1)
 //UG_FillFrame(bar->x_pos + 1, bar->y_pos + 1, bar->x_pos + pixels, (bar->y_pos + 1) + (bar->width - 2), 1); // draw new bar
