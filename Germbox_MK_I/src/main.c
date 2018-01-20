@@ -193,8 +193,10 @@ int main (void)
 	/*****Display test - Delete next section for real use *********/
 	
 	int32_t enc = 0, data = 0;
-	GR_ProgressBar_create(&bar1, 10, 30, 12, 70, 1, 10);
+	GR_ProgressBar_create(&bar1, 10, 10, 8, 100, 1, 10);
+	GR_Carrot_create(&bar1, CARRIOT_SINGLE, 5);
 	GR_ProgressBar_init(&bar1);
+	GR_ProgressBar_update(&bar1, 5);
 	display_update();
 	data = 1;
 	while(1)
@@ -209,7 +211,7 @@ int main (void)
 		
 		if(enc)
 		{
-			GR_ProgressBar_update(&bar1, data);
+			GR_Carrot_update(&bar1, data);
 		}
 		
 		
